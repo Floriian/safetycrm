@@ -11,7 +11,7 @@ services:
       - .env.development
 
   redis:
-  container_name: dev-redis
-  image: redis:7.2
-  ports:
-    - 6379:6379
+    container_name: safetycrm-dev-redis
+    image: redis:7.2
+    ports:
+      - 6379:6379
