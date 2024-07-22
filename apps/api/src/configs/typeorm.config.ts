@@ -32,6 +32,6 @@ const dataSourceOptions = buildDataSourceOptinos(
 
 export default new DataSource({
   ...dataSourceOptions,
-  migrations: [join(__dirname, '../migrations/*.{ts,js}')],
-  entities: [join(__dirname, '../**/**/**.entity.{js,ts}')],
+  migrations: [join(__dirname, 'dist/migrations/*.{ts,js}')],
+  entities: [join(__dirname, 'dist/**/*.entity.js')],
 });
