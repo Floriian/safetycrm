@@ -1,5 +1,17 @@
-import { Button } from "@mui/material";
+import { Box, Paper } from "@mui/material";
+import { LoginForm } from "./_components";
 
 export default function Landing() {
-  return <Button variant="outlined">aa</Button>;
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "calc(100vh - 5rem)",
+      }}
+    >
+      <LoginForm />
+    </Box>
+  );
 }

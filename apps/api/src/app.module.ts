@@ -5,6 +5,7 @@ import { validateEnv } from './env/env.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormConfig } from './configs/typeorm.config';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 const env = process.env.NODE_ENV;
 
@@ -18,6 +19,7 @@ const env = process.env.NODE_ENV;
     EnvModule,
     TypeOrmModule.forRootAsync(typeormConfig),
     UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
