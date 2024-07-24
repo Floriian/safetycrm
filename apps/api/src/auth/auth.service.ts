@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { SignInDto } from './dtos/sign-in.dto';
+import { UserRepository } from 'src/users/repositories/user.repository';
+import { HashService } from 'src/hash/hash.service';
+import { InvalidCredentialsException } from './exceptions/invalid-credentials.exception';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './types';
+import { EnvService } from 'src/env/env.service';
+import { CONSTANTS } from 'src/constants';
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private userRepository: UserRepository,
+    private hashService: HashService,
+    private jwtService: JwtService,
+    private envService: EnvService,
+  ) {}
+  async signIn(data: SignInDto) {
+    const user = await this.userRepository.findOneByEmail(data.email);
+    if (!user) throw new InvalidCredentialsException();
+
+    const isPasswordMatches = await this.hashService.compare(
+      data.password,
+      user.password,
+    );
+    if (!isPasswordMatches) throw new UnauthorizedException();
+
+    const payload: JwtPayload = {
+      email: user.email,
+      sub: user.id,
+    };
+
+    return this.generateTokens(payload);
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  private async generateTokens(payload: JwtPayload) {
+    const access_token = await this.jwtService.signAsync(payload, {
+      secret: this.envService.get('AUTH_SECRET'),
+      expiresIn: CONSTANTS.AT_EXPIRES,
+    });
+    return { access_token };
   }
 }

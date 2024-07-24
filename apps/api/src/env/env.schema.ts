@@ -3,6 +3,9 @@ import { plainToInstance } from 'class-transformer';
 export class EnvSchema {
   @IsNotEmpty()
   DATABASE_URL: string;
+
+  @IsNotEmpty()
+  AUTH_SECRET: string;
 }
 
 export const validateEnv = (env: Record<string, unknown>) => {

@@ -16,26 +16,26 @@ export class UserRepository extends Repository<User> {
   }
 
   async findOneByEmail(email: string) {
-    return await this.findOneBy({ email });
+    return await this.userRepository.findOneBy({ email });
   }
 
   async findOneByid(id: number) {
-    return await this.findOneBy({ id });
+    return await this.userRepository.findOneBy({ id });
   }
 
   async store(_user: CreateUserDto) {
-    const user = this.create(_user);
-    return this.save(user);
+    const user = this.userRepository.create(_user);
+    return this.userRepository.save(user);
   }
 
   async updateOneById(
     id: number,
     data: User | UpdateUserDto,
   ): Promise<User | undefined> {
-    const user = await this.findOneByid(id);
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) return undefined;
     Object.assign(user, data);
 
-    return this.save(user);
+    return this.userRepository.save(user);
   }
 }
