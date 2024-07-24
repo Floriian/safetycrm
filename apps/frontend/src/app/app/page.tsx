@@ -1,5 +1,5 @@
-import { Typography } from "@mui/material";
+import { Button } from "@mui/material";
 
 export default function Dashboard() {
-  return <Typography>Dashboard</Typography>;
+  return <Button>Get me</Button>;
 }

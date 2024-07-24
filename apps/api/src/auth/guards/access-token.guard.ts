@@ -19,6 +19,6 @@ export class AtGuard extends AuthGuard(CONSTANTS.AT_STRATEGY) {
     ]);
 
     if (isPublic) return true;
-    return this.canActivate(context);
+    return super.canActivate(context);
   }
 }

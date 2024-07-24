@@ -6,7 +6,7 @@ export class HashService {
     return await argon2.hash(payload);
   }
 
-  async compare(plain: string, hash: string) {
-    return await argon2.verify(plain, hash);
+  async compare(hash: string, plain: string) {
+    return await argon2.verify(hash, plain);
   }
 }

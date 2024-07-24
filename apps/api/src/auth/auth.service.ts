@@ -20,9 +20,10 @@ export class AuthService {
     if (!user) throw new InvalidCredentialsException();
 
     const isPasswordMatches = await this.hashService.compare(
-      data.password,
       user.password,
+      data.password,
     );
+
     if (!isPasswordMatches) throw new UnauthorizedException();
 
     const payload: JwtPayload = {
@@ -31,6 +32,10 @@ export class AuthService {
     };
 
     return this.generateTokens(payload);
+  }
+
+  async me(id: number) {
+    return this.userRepository.findOneByid(id);
   }
 
   private async generateTokens(payload: JwtPayload) {

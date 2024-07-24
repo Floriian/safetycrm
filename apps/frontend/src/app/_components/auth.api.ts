@@ -3,6 +3,9 @@ import { AuthSchema } from "./auth.schema";
 
 export const authApi = {
   login: async (data: AuthSchema) => {
-    return await api.post<{ token: string }>("/auth/sign-in", data);
+    return await api.post<{ access_token: string }>("/auth/sign-in", data);
+  },
+  me: async () => {
+    return await api("/auth/me");
   },
 };

@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Alert,
   Box,
   Button,
   FormGroup,
@@ -11,8 +12,12 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AuthSchema, authSchema } from "./auth.schema";
 import { loginAction } from "./auth.actions";
+import { AxiosError, HttpStatusCode } from "axios";
+import { useState } from "react";
+import { redirect } from "next/navigation";
 
 export function LoginForm() {
+  const [error, setError] = useState<boolean>(false);
   const {
     register,
     formState: { errors },
@@ -23,7 +28,7 @@ export function LoginForm() {
 
   const onSubmit: SubmitHandler<AuthSchema> = async (data) => {
     const res = await loginAction(data);
-    console.log(res);
+    if (!res?.success) setError(true);
   };
 
   return (
@@ -36,6 +41,16 @@ export function LoginForm() {
       <Typography variant="h6" textAlign="center" sx={{ marginBottom: "1rem" }}>
         Safety CRM
       </Typography>
+      {error && (
+        <Alert
+          sx={{
+            marginBottom: "1rem",
+          }}
+          severity="error"
+        >
+          Invalid credentials
+        </Alert>
+      )}
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <FormGroup
           sx={{
