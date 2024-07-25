@@ -4,7 +4,7 @@ import { HttpStatusCode } from "axios";
 import { cookies } from "next/headers";
 import { CONSTANTS } from "@/constants";
 import { redirect } from "next/navigation";
-import { Drawer } from "./_components";
+import { Drawer, SnackBarProvider } from "./_components";
 
 export default async function AppLayout({
   children,
@@ -17,9 +17,11 @@ export default async function AppLayout({
   }
 
   return (
-    <>
-      {modal}
-      <Drawer>{children}</Drawer>
-    </>
+    <SnackBarProvider>
+      <Drawer>
+        {modal}
+        {children}
+      </Drawer>
+    </SnackBarProvider>
   );
 }

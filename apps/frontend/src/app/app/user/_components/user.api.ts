@@ -6,4 +6,8 @@ export const userApi = {
     const { data } = await api<User[]>("/users");
     return data;
   },
+  delete: async (id: number) => {
+    const { data } = await api.delete(`/users/${id}`);
+    return data;
+  },
 };

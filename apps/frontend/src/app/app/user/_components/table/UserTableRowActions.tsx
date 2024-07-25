@@ -15,7 +15,7 @@ export function UserTableRowActions({ userId }: Props) {
   return (
     <>
       <TableCell>
-        <Link href={`/app/user/${userId}`}>
+        <Link href={`/app/user/${userId}/delete`}>
           <IconButton>
             <Delete color="error" />
           </IconButton>
