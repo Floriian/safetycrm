@@ -41,27 +41,27 @@ const drawerWidth = 240;
 
 const menuItems: { name: string; href: string; icon: React.ReactNode }[] = [
   {
-    href: "/",
+    href: "/app",
     name: "Dashboard",
     icon: <Dashboard />,
   },
   {
-    href: "/client",
+    href: "/app/client",
     name: "Clients",
     icon: <SupervisedUserCircle />,
   },
   {
-    href: "/company",
+    href: "/app/company",
     name: "Companies",
     icon: <Business />,
   },
   {
-    href: "/rule",
+    href: "/app/rule",
     name: "Rules",
     icon: <Segment />,
   },
   {
-    href: "/user",
+    href: "/app/user",
     name: "Users",
     icon: <Group />,
   },
@@ -183,7 +183,7 @@ export function Drawer({ children }: Props) {
           {menuItems.map((item) => (
             <ListItem key={item.href} disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                selected={pathname.includes(item.href)}
+                selected={pathname === item.href}
                 onClick={() => router.push(item.href)}
                 sx={{
                   minHeight: 48,

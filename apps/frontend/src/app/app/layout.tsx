@@ -8,11 +8,18 @@ import { Drawer } from "./_components";
 
 export default async function AppLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  modal,
+}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
   const currentUser = await getCurrentUser();
   if (currentUser?.status === HttpStatusCode.Unauthorized) {
     cookies().delete(CONSTANTS.cookies.AUTH_COOKIE);
     redirect("/");
   }
-  return <Drawer>{children}</Drawer>;
+
+  return (
+    <>
+      {modal}
+      <Drawer>{children}</Drawer>
+    </>
+  );
 }

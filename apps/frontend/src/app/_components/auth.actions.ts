@@ -35,7 +35,6 @@ export const loginAction = async (
 };
 
 export const getCurrentUser = cache(async () => {
-  console.log("calling on getcurrentuser function...");
   try {
     return await authApi.me();
   } catch (e) {
