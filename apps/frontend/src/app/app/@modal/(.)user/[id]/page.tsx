@@ -30,6 +30,7 @@ export default function UserDeleteModal({ params: { id } }: Props) {
 
       router.back();
     } catch (e) {
+      enqueueSnackbar("An error happened.", { variant: "error" });
       console.log(e);
     }
   };
