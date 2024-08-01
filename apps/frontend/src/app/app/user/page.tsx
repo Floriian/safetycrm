@@ -9,7 +9,7 @@ export default async function UsersPage() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <UserPageHeader />
-      <UsersTable users={users!} />
+      <UsersTable users={users} />
     </Box>
   );
 }

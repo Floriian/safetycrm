@@ -13,7 +13,7 @@ import { userTableCols } from "./user-table-cols";
 import { UserRow } from "./UserRow";
 
 interface Props {
-  users: User[];
+  users: User[] | undefined;
 }
 
 export function UsersTable({ users }: Props) {
