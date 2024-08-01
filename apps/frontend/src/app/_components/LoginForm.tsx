@@ -14,10 +14,11 @@ import { AuthSchema, authSchema } from "./auth.schema";
 import { loginAction } from "./auth.actions";
 import { AxiosError, HttpStatusCode } from "axios";
 import { useState } from "react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [error, setError] = useState<boolean>(false);
+  const router = useRouter();
   const {
     register,
     formState: { errors },
@@ -29,6 +30,7 @@ export function LoginForm() {
   const onSubmit: SubmitHandler<AuthSchema> = async (data) => {
     const res = await loginAction(data);
     if (!res?.success) setError(true);
+    if (res.success) router.push("/app");
   };
 
   return (

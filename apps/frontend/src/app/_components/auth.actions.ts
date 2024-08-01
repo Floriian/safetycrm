@@ -27,11 +27,14 @@ export const loginAction = async (
     cookies().set(CONSTANTS.cookies.AUTH_COOKIE, response.data.access_token, {
       httpOnly: true,
     });
+
+    return {
+      success: true,
+    };
   } catch (e) {
+    console.log(e);
     return { success: false, message: "Invalid credentials" };
   }
-
-  redirect("/app");
 };
 
 export const getCurrentUser = cache(async () => {
