@@ -1,5 +1,6 @@
 import { api } from "@/utils";
 import { User } from "./user.schema";
+import { ApiUpdateResponse } from "@/types";
 
 export const userApi = {
   getAll: async () => {
@@ -16,8 +17,8 @@ export const userApi = {
     return data;
   },
 
-  update: async (id: number, dto: User) => {
-    const { data } = await api.patch(`/users/${id}`, dto);
+  update: async (id: number | undefined, dto: User) => {
+    const { data } = await api.patch<ApiUpdateResponse>(`/users/${id}`, dto);
     return data;
   },
 

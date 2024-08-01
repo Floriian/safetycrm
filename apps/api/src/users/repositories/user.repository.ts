@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -31,10 +31,9 @@ export class UserRepository extends Repository<User> {
   async updateOneById(
     id: number,
     data: User | UpdateUserDto,
-  ): Promise<User | undefined> {
+  ): Promise<UpdateResult> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) throw new Error('User not found.');
-
-    return (await this.userRepository.update(id, data)).raw;
+    return await this.userRepository.update(id, data);
   }
 }

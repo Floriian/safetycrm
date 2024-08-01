@@ -1,9 +1,10 @@
 "use server";
 
-import { cache } from "react";
 import { userApi } from "./user.api";
 import { revalidatePath } from "next/cache";
 import { User } from "./user.schema";
+import { isAxiosError } from "axios";
+import { UpdateResponse } from "@/types";
 
 export const getAllUsers = async () => {
   try {
@@ -30,12 +31,20 @@ export const deleteUser = async (id: number) => {
   }
 };
 
-export const updateUser = async (id: number, data: User) => {
+export const updateUser = async (id: number | undefined, data: User) => {
   try {
     const response = await userApi.update(id, data);
     await revalidatePath(`/app/user/${id}`);
-    return response;
+    return {
+      success: true,
+    } satisfies UpdateResponse<User>;
   } catch (e) {
+    if (isAxiosError<ApiError>(e)) {
+      return {
+        data: e.response?.data,
+        success: false,
+      } satisfies UpdateResponse<ApiError>;
+    }
     console.error(e);
   }
 };

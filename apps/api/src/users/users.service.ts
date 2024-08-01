@@ -3,7 +3,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './repositories/user.repository';
 import { UserNotFoundException } from './exceptions/user-not-found.exception';
-import { QueryFailedError } from 'typeorm';
+import { QueryFailedError, UpdateResult } from 'typeorm';
+import { UserEmailTakenException } from './exceptions/user-email-taken.exception';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -50,13 +52,24 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
     try {
       await this.findOne(id);
 
-      const result = await this.userRepository.updateOneById(id, updateUserDto);
-      return result;
+      return await this.userRepository.updateOneById(id, updateUserDto);
     } catch (e) {
+      if (e instanceof QueryFailedError) {
+        if (
+          e.message.includes(
+            'duplicate key value violates unique constraint "unique_email"',
+          )
+        ) {
+          throw new UserEmailTakenException();
+        }
+      }
       console.error(e);
     }
   }
