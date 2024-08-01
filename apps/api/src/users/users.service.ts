@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './repositories/user.repository';
 import { UserNotFoundException } from './exceptions/user-not-found.exception';
+import { QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -33,13 +34,32 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findOneByid(id);
-    if (!user) throw new UserNotFoundException();
-    return user;
+    try {
+      const user = await this.userRepository.findOneByid(id);
+      if (!user) throw new UserNotFoundException();
+      delete user.password;
+      return user;
+    } catch (e) {
+      if (
+        e instanceof QueryFailedError &&
+        e.message.includes('invalid input syntax for type integer: ')
+      ) {
+        throw new UserNotFoundException();
+      }
+      throw e;
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      await this.findOne(id);
+
+      const result = await this.userRepository.updateOneById(id, updateUserDto);
+      console.log(result);
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async remove(id: number) {

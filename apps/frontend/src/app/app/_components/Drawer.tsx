@@ -10,7 +10,6 @@ import {
   ChevronLeft,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
-import { getCurrentUser } from "@/app/_components/auth.actions";
 import {
   CSSObject,
   styled,

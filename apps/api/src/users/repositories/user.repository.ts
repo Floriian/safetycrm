@@ -33,9 +33,8 @@ export class UserRepository extends Repository<User> {
     data: User | UpdateUserDto,
   ): Promise<User | undefined> {
     const user = await this.userRepository.findOneBy({ id });
-    if (!user) return undefined;
-    Object.assign(user, data);
+    if (!user) throw new Error('User not found.');
 
-    return this.userRepository.save(user);
+    return (await this.userRepository.update(id, data)).raw;
   }
 }

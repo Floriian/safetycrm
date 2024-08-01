@@ -1,3 +1,17 @@
-export default function DeletePage() {
-  return <h1>user details page</h1>;
+import { HttpStatusCode } from "axios";
+import { getOneUser } from "../../_components/user.actions";
+import { UserForm } from "../../_components/UserForm";
+import { redirect } from "next/navigation";
+
+interface Props {
+  params: {
+    id: string;
+  };
+}
+export default async function UserPage({ params: { id } }: Props) {
+  const user = await getOneUser(+id);
+  if (user?.status === HttpStatusCode.NotFound) await redirect("/app/user");
+  console.log(user?.status);
+
+  return <UserForm user={user?.data || undefined} />;
 }
