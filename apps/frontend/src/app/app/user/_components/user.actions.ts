@@ -9,7 +9,7 @@ export const getAllUsers = async () => {
   try {
     return await userApi.getAll();
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -17,7 +17,7 @@ export const getOneUser = async (id: number) => {
   try {
     return await userApi.getOne(id);
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -26,7 +26,7 @@ export const deleteUser = async (id: number) => {
     await revalidatePath(`/app/user`);
     return await userApi.delete(id);
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -36,7 +36,7 @@ export const updateUser = async (id: number, data: User) => {
     await revalidatePath(`/app/user/${id}`);
     return response;
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -45,6 +45,6 @@ export const createUser = async (data: User) => {
     const response = await userApi.create(data);
     return response;
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };

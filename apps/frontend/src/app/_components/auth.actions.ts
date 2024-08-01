@@ -32,7 +32,7 @@ export const loginAction = async (
       success: true,
     };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, message: "Invalid credentials" };
   }
 };
@@ -44,6 +44,6 @@ export const getCurrentUser = cache(async () => {
     if (e instanceof AxiosError) {
       if (e.response?.status === HttpStatusCode.Unauthorized) redirect("/");
     }
-    console.log(e);
+    console.error(e);
   }
 });

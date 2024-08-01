@@ -14,7 +14,7 @@ export class UsersService {
       const user = await this.userRepository.store(createUserDto);
       return user;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 
@@ -55,10 +55,9 @@ export class UsersService {
       await this.findOne(id);
 
       const result = await this.userRepository.updateOneById(id, updateUserDto);
-      console.log(result);
       return result;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 

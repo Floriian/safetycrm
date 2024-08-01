@@ -11,7 +11,6 @@ interface Props {
 export default async function UserPage({ params: { id } }: Props) {
   const user = await getOneUser(+id);
   if (user?.status === HttpStatusCode.NotFound) await redirect("/app/user");
-  console.log(user?.status);
 
   return <UserForm user={user?.data || undefined} />;
 }
