@@ -30,7 +30,6 @@ export function UserForm({ user }: Props) {
   });
 
   const onSubmit: SubmitHandler<CreateOrUpdateUserSchema> = async (data) => {
-    console.log(data.isNew);
     if (!data.isNew) {
       //@ts-ignore
       await updateUser(data.id, data);
@@ -41,6 +40,8 @@ export function UserForm({ user }: Props) {
     }
   };
 
+  useEffect(() => console.log(errors), [errors]);
+
   return (
     <Paper sx={{ padding: "1rem" }}>
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
@@ -50,19 +51,19 @@ export function UserForm({ user }: Props) {
           <TextField
             label="Name"
             error={!!errors.name?.message}
-            helperText={!!errors.name?.message}
+            helperText={errors.name?.message}
             {...register("name")}
           />
           <TextField
             label="Email"
             error={!!errors.email?.message}
-            helperText={!!errors.email?.message}
+            helperText={errors.email?.message}
             {...register("email")}
           />
           <TextField
             label="Password"
             error={!!errors.password?.message}
-            helperText={!!errors.password?.message}
+            helperText={errors.password?.message}
             type="password"
             {...register("password")}
           />
