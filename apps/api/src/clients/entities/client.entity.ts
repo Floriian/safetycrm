@@ -1,31 +1,25 @@
-import { Client } from 'src/clients/entities/client.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-@Unique('unique_email', ['email'])
-export class User {
+@Unique('unique_client_name', ['name'])
+export class Client {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  email: string;
-
-  @Column()
   name: string;
 
-  @Column()
-  password: string;
-
-  @OneToMany(() => Client, (client) => client.user)
-  clients?: Client[];
+  @ManyToOne(() => User, (user) => user.clients)
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;

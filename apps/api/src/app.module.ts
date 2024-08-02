@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './auth/guards/access-token.guard';
+import { ClientsModule } from './clients/clients.module';
 
 const env = process.env.NODE_ENV;
 
@@ -22,6 +23,7 @@ const env = process.env.NODE_ENV;
     TypeOrmModule.forRootAsync(typeormConfig),
     UsersModule,
     AuthModule,
+    ClientsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: AtGuard }],
 })
