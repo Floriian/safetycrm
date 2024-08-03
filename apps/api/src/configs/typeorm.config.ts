@@ -27,6 +27,7 @@ export function buildDataSourceOptinos(
     migrations: [join(__dirname, '../../dist/migrations/*.{ts,js}')],
     type: 'postgres',
     schema: 'public',
+    synchronize: true,
   };
 }
 

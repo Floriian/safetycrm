@@ -5,7 +5,6 @@ import { UserRepository } from './repositories/user.repository';
 import { UserNotFoundException } from './exceptions/user-not-found.exception';
 import { QueryFailedError, UpdateResult } from 'typeorm';
 import { UserEmailTakenException } from './exceptions/user-email-taken.exception';
-import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {

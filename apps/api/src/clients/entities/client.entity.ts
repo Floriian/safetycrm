@@ -1,9 +1,11 @@
+import { Contact } from 'src/contacts/entity/contact.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -20,6 +22,9 @@ export class Client {
 
   @ManyToOne(() => User, (user) => user.clients)
   user: User;
+
+  @OneToMany(() => Contact, (contact) => contact.client)
+  contact: Contact[];
 
   @CreateDateColumn()
   createdAt: Date;
