@@ -7,6 +7,7 @@ import { authApi } from "./auth.api";
 import { Axios, AxiosError, HttpStatusCode } from "axios";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { logError } from "@/utils";
 
 export const loginAction = async (
   data: AuthSchema
@@ -32,7 +33,7 @@ export const loginAction = async (
       success: true,
     };
   } catch (e) {
-    console.error(e);
+    logError(loginAction.name, e);
     return { success: false, message: "Invalid credentials" };
   }
 };
@@ -44,6 +45,6 @@ export const getCurrentUser = cache(async () => {
     if (e instanceof AxiosError) {
       if (e.response?.status === HttpStatusCode.Unauthorized) redirect("/");
     }
-    console.error(e);
+    logError(getCurrentUser.name, e);
   }
 });

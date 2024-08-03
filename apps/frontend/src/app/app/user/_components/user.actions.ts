@@ -5,12 +5,13 @@ import { revalidatePath } from "next/cache";
 import { User } from "./user.schema";
 import { isAxiosError } from "axios";
 import { UpdateResponse } from "@/types";
+import { logError } from "@/utils";
 
 export const getAllUsers = async () => {
   try {
     return await userApi.getAll();
   } catch (e) {
-    console.error(e);
+    logError(getAllUsers.name, e);
   }
 };
 
@@ -18,7 +19,7 @@ export const getOneUser = async (id: number) => {
   try {
     return await userApi.getOne(id);
   } catch (e) {
-    console.error(e);
+    logError(getOneUser.name, e);
   }
 };
 
@@ -27,7 +28,7 @@ export const deleteUser = async (id: number) => {
     await revalidatePath(`/app/user`);
     return await userApi.delete(id);
   } catch (e) {
-    console.error(e);
+    logError(deleteUser.name, e);
   }
 };
 
@@ -45,7 +46,7 @@ export const updateUser = async (id: number | undefined, data: User) => {
         success: false,
       } satisfies UpdateResponse<ApiError>;
     }
-    console.error(e);
+    logError(updateUser.name, e);
   }
 };
 
@@ -54,6 +55,6 @@ export const createUser = async (data: User) => {
     const response = await userApi.create(data);
     return response;
   } catch (e) {
-    console.error(e);
+    logError(createUser.name, e);
   }
 };

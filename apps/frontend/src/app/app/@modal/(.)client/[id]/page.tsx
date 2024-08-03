@@ -1,4 +1,5 @@
 "use client";
+import { logError } from "@/utils";
 import {
   Button,
   Dialog,
@@ -29,7 +30,7 @@ export default function DeleteClientModal({ params: { id } }: Props) {
       router.back();
     } catch (e) {
       enqueueSnackbar("An error happened.", { variant: "error" });
-      console.error(e);
+      logError(DeleteClientModal.name, e);
     }
   };
 
