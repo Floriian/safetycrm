@@ -8,6 +8,7 @@ import { Axios, AxiosError, HttpStatusCode } from "axios";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { logError } from "@/utils";
+import { User } from "../app/user/_components/user.schema";
 
 export const loginAction = async (
   data: AuthSchema
@@ -38,12 +39,26 @@ export const loginAction = async (
   }
 };
 
+interface GetCurrentUser {
+  status?: number;
+  user?: User;
+  sessionExpired: boolean;
+}
 export const getCurrentUser = cache(async () => {
   try {
-    return await authApi.me();
+    const { data, status } = await authApi.me();
+    return {
+      sessionExpired: false,
+      status,
+      user: data,
+    } satisfies GetCurrentUser;
   } catch (e) {
     if (e instanceof AxiosError) {
-      if (e.response?.status === HttpStatusCode.Unauthorized) redirect("/");
+      if (e.response?.status === HttpStatusCode.Unauthorized) {
+        return {
+          sessionExpired: true,
+        } satisfies GetCurrentUser;
+      }
     }
     logError(getCurrentUser.name, e);
   }

@@ -1,21 +1,21 @@
 import React from "react";
+import { Drawer, SnackBarProvider } from "./_components";
 import { getCurrentUser } from "../_components/auth.actions";
-import { HttpStatusCode } from "axios";
+import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { CONSTANTS } from "@/constants";
-import { redirect } from "next/navigation";
-import { Drawer, SnackBarProvider } from "./_components";
+
+export const revalidate = 10;
 
 export default async function AppLayout({
   children,
   modal,
 }: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
-  const currentUser = await getCurrentUser();
-  if (currentUser?.status === HttpStatusCode.Unauthorized) {
-    cookies().delete(CONSTANTS.cookies.AUTH_COOKIE);
+  const user = await getCurrentUser();
+  if (user?.sessionExpired) {
+    console.log(user);
     redirect("/");
   }
-
   return (
     <SnackBarProvider>
       <Drawer>

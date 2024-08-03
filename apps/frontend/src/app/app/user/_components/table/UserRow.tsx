@@ -14,7 +14,7 @@ export async function UserRow({ user }: Props) {
   const userRow = userTableCols.map((col) => user[col.name]);
 
   const currentUser = await getCurrentUser();
-  const isUserMatchesWithCurrentUser = currentUser?.data.id === user.id;
+  const isUserMatchesWithCurrentUser = currentUser?.user?.id === user.id;
 
   return (
     <TableRow>

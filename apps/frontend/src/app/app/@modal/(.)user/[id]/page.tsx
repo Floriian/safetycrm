@@ -1,6 +1,5 @@
 "use client";
 import { deleteUser } from "@/app/app/user/_components/user.actions";
-import { logError } from "@/utils";
 import {
   Button,
   Dialog,
@@ -32,7 +31,7 @@ export default function UserDeleteModal({ params: { id } }: Props) {
       router.back();
     } catch (e) {
       enqueueSnackbar("An error happened.", { variant: "error" });
-      logError(UserDeleteModal.name, e);
+      console.error(e);
     }
   };
 
