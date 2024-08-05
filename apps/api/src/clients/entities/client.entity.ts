@@ -24,7 +24,7 @@ export class Client {
   user: User;
 
   @OneToMany(() => Contact, (contact) => contact.client)
-  contact: Contact[];
+  contacts: Contact[];
 
   @CreateDateColumn()
   createdAt: Date;

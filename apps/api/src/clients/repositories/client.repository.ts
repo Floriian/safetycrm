@@ -19,7 +19,7 @@ export class ClientRepository extends Repository<Client> {
   async findOneById(id: number): Promise<Client> {
     return await this.clientRepository.findOne({
       where: { id },
-      relations: { contact: true },
+      relations: { contacts: true },
     });
   }
 

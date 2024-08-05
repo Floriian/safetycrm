@@ -8,5 +8,5 @@ export class CreateClientDto {
 
   @IsArray()
   @IsOptional()
-  contact: CreateContactDto[];
+  contacts: CreateContactDto[];
 }

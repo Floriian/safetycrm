@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Client, clientSchema } from "./client.schema";
 import { useRouter } from "next/navigation";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
@@ -32,6 +32,7 @@ export function ClientForm({ client }: Props) {
   });
 
   const onSubmit: SubmitHandler<Client> = async (data) => {
+    console.log(data.contacts);
     if (data.id) await updateClient(data.id, data);
     if (!data.id) await createClient(data);
   };

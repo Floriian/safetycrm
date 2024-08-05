@@ -12,20 +12,27 @@ import {
 import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Contact } from "./contact.schema";
+import { deleteContact } from "./contact.action";
+
+type Contacts = { contacts: Contact[] };
 
 export function ContactForm() {
-  const { control, register, getValues } = useFormContext<Contact>();
-  const { fields, append, insert, remove } = useFieldArray<Contact>({
+  const { control, register, getValues } = useFormContext<Contacts>();
+  const { fields, append, insert, remove } = useFieldArray<Contacts>({
     control,
-    //@ts-expect-error we need a better workaround for this.
-    name: "contact",
+    name: "contacts" as const,
   });
 
   const addContact = () => append({ phoneNumber: "" });
-  const removeField = (index: number) => remove(index);
-
-  useEffect(() => console.log(fields), [fields]);
-
+  const removeField = (index: number) => {
+    const fieldValues = getValues(`contacts.${index}`);
+    try {
+      const result = deleteContact(fieldValues!.id!);
+      remove(index);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Box>
       <Typography variant="h4">Contacts</Typography>
@@ -47,10 +54,13 @@ export function ContactForm() {
           >
             <TextField
               label="Phone number"
-              //@ts-expect-error we need a better workaround for this...
-              {...register(`contact.${i}.phoneNumber`)}
+              {...register(`contacts.${i}.phoneNumber`)}
             />
-            <IconButton onClick={() => removeField(i)}>
+            <IconButton
+              onClick={(e) => {
+                removeField(i);
+              }}
+            >
               <Remove />
             </IconButton>
           </Box>

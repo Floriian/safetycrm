@@ -16,7 +16,7 @@ export class ClientsService {
     try {
       const newClient = await this.clientRepository.store(createClientDto);
 
-      const contactInstances = createClientDto.contact.map((client) =>
+      const contactInstances = createClientDto.contacts.map((client) =>
         this.contactRepository.create({
           ...client,
           client: { id: newClient.id },
@@ -39,7 +39,6 @@ export class ClientsService {
     try {
       const client = await this.clientRepository.findOneById(id);
       if (!client) throw new ClientNotFoundException();
-      console.log(client);
       return client;
     } catch (e) {
       if (
@@ -56,14 +55,14 @@ export class ClientsService {
     const client = await this.clientRepository.findOneById(id);
     if (!client) throw new ClientNotFoundException();
 
-    const contacts = updateClientDto.contact.map((contact) => {
-      if (client.contact === updateClientDto.contact) return;
-      const contactInstances = this.contactRepository.create(contact);
+    for (const contact of updateClientDto.contacts) {
+      await this.contactRepository.save({
+        ...contact,
+        client: { id },
+      });
+    }
 
-      return contactInstances;
-    });
-
-    await this.contactRepository.save(contacts);
+    delete updateClientDto.contacts;
 
     return await this.clientRepository.updateOneById(id, updateClientDto);
   }

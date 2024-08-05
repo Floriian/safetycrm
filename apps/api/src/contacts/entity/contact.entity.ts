@@ -9,6 +9,6 @@ export class Contact {
   @Column()
   phoneNumber: string;
 
-  @ManyToOne(() => Client, (client) => client.contact)
+  @ManyToOne(() => Client, (client) => client.contacts)
   client: Client;
 }
