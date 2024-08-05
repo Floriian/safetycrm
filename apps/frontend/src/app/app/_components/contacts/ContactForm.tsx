@@ -21,7 +21,7 @@ export function ContactForm() {
     name: "contact",
   });
 
-  const addContact = () => append({ contactPhoneNumber: "" });
+  const addContact = () => append({ phoneNumber: "" });
   const removeField = (index: number) => remove(index);
 
   useEffect(() => console.log(fields), [fields]);
@@ -48,7 +48,7 @@ export function ContactForm() {
             <TextField
               label="Phone number"
               //@ts-expect-error we need a better workaround for this...
-              {...register(`contact.${i}.contactPhoneNumber`)}
+              {...register(`contact.${i}.phoneNumber`)}
             />
             <IconButton onClick={() => removeField(i)}>
               <Remove />

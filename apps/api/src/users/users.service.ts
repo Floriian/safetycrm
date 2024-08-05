@@ -8,11 +8,12 @@ import { UserEmailTakenException } from './exceptions/user-email-taken.exception
 
 @Injectable()
 export class UsersService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
       const user = await this.userRepository.store(createUserDto);
+
       return user;
     } catch (e) {
       console.error(e);

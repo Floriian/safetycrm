@@ -15,6 +15,7 @@ import {
   TextField,
 } from "@mui/material";
 import { ContactForm } from "../../_components";
+import { createClient, updateClient } from "./client.actions";
 
 interface Props {
   client?: Client;
@@ -30,7 +31,10 @@ export function ClientForm({ client }: Props) {
     defaultValues: client ?? {},
   });
 
-  const onSubmit: SubmitHandler<Client> = async (data) => console.log(data);
+  const onSubmit: SubmitHandler<Client> = async (data) => {
+    if (data.id) await updateClient(data.id, data);
+    if (!data.id) await createClient(data);
+  };
 
   return (
     <Paper sx={{ padding: "1rem " }}>

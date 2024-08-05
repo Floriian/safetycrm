@@ -23,7 +23,7 @@ export async function ClientRow({ client }: Props) {
             <Delete color="error" />
           </IconButton>
         </Link>
-        <Link href={`/app/client/${client.id}`}>
+        <Link href={`/app/client/${client.id}/details`}>
           <IconButton>
             <Edit color="primary" />
           </IconButton>

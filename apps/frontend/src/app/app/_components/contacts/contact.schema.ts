@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const contactSchema = z.object({
-  contactPhoneNumber: z.string(),
+  phoneNumber: z.string(),
 });
 
 export type Contact = z.infer<typeof contactSchema>;
