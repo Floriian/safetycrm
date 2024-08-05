@@ -11,7 +11,7 @@ export const getAllUsers = async () => {
   try {
     return await userApi.getAll();
   } catch (e) {
-    logError(getAllUsers.name, e);
+    logError("getAllUsers", e);
   }
 };
 
@@ -19,7 +19,7 @@ export const getOneUser = async (id: number) => {
   try {
     return await userApi.getOne(id);
   } catch (e) {
-    logError(getOneUser.name, e);
+    logError("getOneUser", e);
   }
 };
 
@@ -28,7 +28,7 @@ export const deleteUser = async (id: number) => {
     await revalidatePath(`/app/user`);
     return await userApi.delete(id);
   } catch (e) {
-    logError(deleteUser.name, e);
+    logError("deleteUser", e);
   }
 };
 
@@ -46,7 +46,7 @@ export const updateUser = async (id: number | undefined, data: User) => {
         success: false,
       } satisfies UpdateResponse<ApiError>;
     }
-    logError(updateUser.name, e);
+    logError("updateUser", e);
   }
 };
 
@@ -55,6 +55,6 @@ export const createUser = async (data: User) => {
     const response = await userApi.create(data);
     return response;
   } catch (e) {
-    logError(createUser.name, e);
+    logError("createUser", e);
   }
 };
