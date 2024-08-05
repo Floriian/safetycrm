@@ -9,4 +9,9 @@ export const clientApi = {
     const { data } = await api<Client[]>("/clients");
     return data;
   },
+
+  getOneById: async (id: number) => {
+    const { data } = await api<Client>(`/client/${id}`);
+    return data;
+  },
 };

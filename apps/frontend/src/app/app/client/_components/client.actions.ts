@@ -28,3 +28,11 @@ export const getAllClients = async () => {
     logError("getAllClients", e);
   }
 };
+
+export const getOneClientById = async (id: number) => {
+  try {
+    return await clientApi.getOneById(id);
+  } catch (e) {
+    logError("getOneClientById", e);
+  }
+};

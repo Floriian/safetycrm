@@ -1,6 +1,6 @@
 "use client";
-import Link from "next/link";
-import { SESSION_EXPRIED_ERROR } from "../_components/auth-error";
+
+import { SESSION_EXPRIED_ERROR } from "@/lib/auth";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,7 @@ export default function ErrorPage({
   return (
     <div>
       {isSessionExpired ? (
-        <Dialog open={true}>
+        <Dialog open={true} onClose={() => router.push("/")}>
           <DialogTitle>Session expired</DialogTitle>
           <DialogActions>
             <Button onClick={() => router.push("/")}>Log In</Button>

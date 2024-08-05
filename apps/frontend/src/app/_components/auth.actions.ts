@@ -10,7 +10,6 @@ import { cache } from "react";
 import { logError } from "@/utils";
 import { User } from "../app/user/_components/user.schema";
 import { unstable_cache } from "next/cache";
-import { SesionExpiredError } from "./auth-error";
 
 export const loginAction = async (
   data: AuthSchema
@@ -65,15 +64,3 @@ export const getCurrentUser = cache(async () => {
     logError("getCurrentUser", e);
   }
 });
-
-export const assertAuthenticated = async () => {
-  console.log("ASSERT AUTHENTICATED CALLED:");
-  const currentUser = await getCurrentUser();
-
-  if (currentUser?.sessionExpired && !currentUser.user) {
-    console.log("session expired");
-    throw new SesionExpiredError();
-  }
-
-  return currentUser?.user;
-};

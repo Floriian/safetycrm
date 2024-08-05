@@ -25,7 +25,7 @@ export class UserRepository extends Repository<User> {
 
   async store(_user: CreateUserDto) {
     const user = this.userRepository.create(_user);
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async updateOneById(
