@@ -5,6 +5,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
 import { Client } from "../client.schema";
@@ -20,10 +21,12 @@ export function ClientsTable({ clients }: Props) {
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
-          {clientTableCols.map((col) => (
-            <TableCell key={col.name}>{col.headerName}</TableCell>
-          ))}
-          <TableCell>Actions</TableCell>
+          <TableRow>
+            {clientTableCols.map((col) => (
+              <TableCell key={col.name}>{col.headerName}</TableCell>
+            ))}
+            <TableCell>Actions</TableCell>
+          </TableRow>
         </TableHead>
         <TableBody>
           {clients?.length && clients.length <= 0 && (
