@@ -4,7 +4,7 @@ import { clientApi } from "./client.api";
 import { Client } from "./client.schema";
 import { isAxiosError } from "axios";
 import { logError } from "@/utils";
-import { CreateResponse, UpdateResponse } from "@/types";
+import { ApiError, CreateResponse, UpdateResponse } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export const createClient = async (client: Client) => {

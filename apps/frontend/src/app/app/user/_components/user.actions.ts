@@ -4,7 +4,7 @@ import { userApi } from "./user.api";
 import { revalidatePath } from "next/cache";
 import { User } from "./user.schema";
 import { isAxiosError } from "axios";
-import { UpdateResponse } from "@/types";
+import { ApiError, UpdateResponse } from "@/types";
 import { logError } from "@/utils";
 
 export const getAllUsers = async () => {
