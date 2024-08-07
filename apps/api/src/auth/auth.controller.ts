@@ -4,8 +4,10 @@ import { SignInDto } from './dtos/sign-in.dto';
 import { Public } from './decorators/public.decorator';
 import { GetUser } from './decorators/get-user.decorator';
 import { JwtPayload } from './types';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags(AuthController.name)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

@@ -12,8 +12,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { JwtPayload } from 'src/auth/types';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiTags(UsersController.name)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
