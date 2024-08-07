@@ -8,6 +8,8 @@ import {
   ChevronRight,
   Menu,
   ChevronLeft,
+  SpaceDashboard,
+  Leaderboard,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -42,17 +44,17 @@ const menuItems: { name: string; href: string; icon: React.ReactNode }[] = [
   {
     href: "/app",
     name: "Dashboard",
-    icon: <Dashboard />,
+    icon: <Leaderboard />,
+  },
+  {
+    href: "/app/manager",
+    name: "Manage rules",
+    icon: <SpaceDashboard />,
   },
   {
     href: "/app/client",
     name: "Clients",
     icon: <SupervisedUserCircle />,
-  },
-  {
-    href: "/app/company",
-    name: "Companies",
-    icon: <Business />,
   },
   {
     href: "/app/rule",

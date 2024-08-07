@@ -1,19 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRuleDto } from './dto/create-rule.dto';
 import { UpdateRuleDto } from './dto/update-rule.dto';
+import { RuleRepository } from './repositories/rule.repository';
+import { ParentRuleNotFoundException } from './exceptions/parent-rule-not-found.exception';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class RulesService {
-  create(createRuleDto: CreateRuleDto) {
-    return 'This action adds a new rule';
+  constructor(private readonly ruleRepository: RuleRepository) {}
+  async create(createRuleDto: CreateRuleDto) {
+    try {
+      const rule = this.ruleRepository.create(createRuleDto);
+
+      if (createRuleDto.parentId) {
+        const parentRule = await this.ruleRepository.findOneById(
+          createRuleDto.parentId,
+        );
+        if (!parentRule) throw new ParentRuleNotFoundException();
+        rule.parent = parentRule;
+      }
+
+      return await this.ruleRepository.save(rule);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
-  findAll() {
-    return `This action returns all rules`;
+  async findAll() {
+    return await this.ruleRepository.find({
+      relations: { children: true, parent: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} rule`;
+  async getAllParents() {
+    return await this.ruleRepository.find({
+      where: {
+        parent: {
+          id: IsNull(),
+        },
+      },
+    });
+  }
+
+  async findOne(id: number) {
+    return await this.ruleRepository.findOneById(id);
   }
 
   update(id: number, updateRuleDto: UpdateRuleDto) {

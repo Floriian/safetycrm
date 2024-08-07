@@ -12,4 +12,30 @@ export class RuleRepository extends Repository<Rule> {
       ruleRepository.queryRunner,
     );
   }
+
+  async findOneById(id: number) {
+    return await this.ruleRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        children: true,
+        parent: true,
+      },
+    });
+  }
+
+  async findOneByParentId(parentId: number) {
+    return await this.ruleRepository.find({
+      where: {
+        parent: {
+          id: parentId,
+        },
+      },
+      relations: {
+        children: true,
+        parent: true,
+      },
+    });
+  }
 }
