@@ -10,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './auth/guards/access-token.guard';
 import { ClientsModule } from './clients/clients.module';
 import { ContactsModule } from './contacts/contacts.module';
+import { RulesModule } from './rules/rules.module';
 
 const env = process.env.NODE_ENV;
 
@@ -26,6 +27,7 @@ const env = process.env.NODE_ENV;
     AuthModule,
     ClientsModule,
     ContactsModule,
+    RulesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: AtGuard }],
 })
