@@ -19,9 +19,9 @@ export const getOneRuleById = async (id: number) => {
   }
 };
 
-export const getAllParentRules = async () => {
+export const getAllRulesWithoutTreeStructure = async () => {
   try {
-    return await ruleApi.getAllParents();
+    return await ruleApi.getAllRulesWithoutTreeStructure();
   } catch (e) {
     logError("getAllParentRules", e);
   }

@@ -2,27 +2,74 @@
 
 import { useRouter } from "next/navigation";
 import { Rule } from "./rule.schema";
-import { ListItem, ListItemButton, Typography, useTheme } from "@mui/material";
-import { useEffect } from "react";
+import {
+  Box,
+  Collapse,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { Delete, Folder, FolderOpen } from "@mui/icons-material";
 
 interface Props {
   rule: Rule;
-  active: boolean;
+  active?: boolean;
 }
 
-//TODO: use link component!
+// TODO: use Link component!
 export function RuleItem({ rule, active }: Props) {
+  const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
   const theme = useTheme();
 
-  useEffect(() => console.log(active), [active]);
+  useEffect(() => {
+    if (rule.children && rule.children.length > 0) {
+      console.log({ rule });
+    } else {
+      console.log("no");
+    }
+  }, [rule]);
+
+  const handleClick = (event: React.MouseEvent, ruleId: number) => {
+    event.stopPropagation();
+    router.push(`/app/rule/${rule.id}`);
+    setOpen(!open);
+  };
 
   return (
-    <ListItemButton
-      onClick={() => router.push(`/app/rule/${rule.id}`)}
-      selected={active}
-    >
-      <Typography>{rule.name}</Typography>
-    </ListItemButton>
+    <>
+      <ListItem
+        secondaryAction={
+          <IconButton edge="end">
+            <Delete />
+          </IconButton>
+        }
+      >
+        <ListItemButton
+          onClick={(e: React.MouseEvent) => handleClick(e, rule!.id!)}
+          selected={active}
+        >
+          {rule.children && rule?.children?.length > 0 && (
+            <ListItemIcon>{open ? <FolderOpen /> : <Folder />}</ListItemIcon>
+          )}
+          <ListItemText primary={<Typography>{rule.name}</Typography>} />
+        </ListItemButton>
+      </ListItem>
+      {rule.children && rule.children.length > 0 && (
+        <Collapse in={open} unmountOnExit>
+          <List component="div" sx={{ paddingLeft: "1rem" }}>
+            {rule.children.map((childRule) => (
+              <RuleItem rule={childRule} key={childRule.id} />
+            ))}
+          </List>
+        </Collapse>
+      )}
+    </>
   );
 }

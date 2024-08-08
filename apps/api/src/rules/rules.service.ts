@@ -4,6 +4,7 @@ import { UpdateRuleDto } from './dto/update-rule.dto';
 import { RuleRepository } from './repositories/rule.repository';
 import { ParentRuleNotFoundException } from './exceptions/parent-rule-not-found.exception';
 import { IsNull } from 'typeorm';
+import { Rule } from './entities/rule.entity';
 
 @Injectable()
 export class RulesService {
@@ -27,19 +28,11 @@ export class RulesService {
   }
 
   async findAll() {
-    return await this.ruleRepository.find({
-      relations: { children: true, parent: true },
-    });
+    return await this.ruleRepository.findTrees();
   }
 
-  async getAllParents() {
-    return await this.ruleRepository.find({
-      where: {
-        parent: {
-          id: IsNull(),
-        },
-      },
-    });
+  async all() {
+    return await this.ruleRepository.find();
   }
 
   async findOne(id: number) {

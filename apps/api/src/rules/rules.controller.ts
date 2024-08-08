@@ -31,9 +31,9 @@ export class RulesController {
     return this.rulesService.findAll();
   }
 
-  @Get('parents')
-  getAllParent() {
-    return this.rulesService.getAllParents();
+  @Get('all')
+  all() {
+    return this.rulesService.all();
   }
 
   @Get(':id')

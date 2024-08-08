@@ -2,15 +2,13 @@ import { List, ListItemButton, ListSubheader, Tooltip } from "@mui/material";
 import { Rule } from "./rule.schema";
 import { RuleItem } from "./RuleItem";
 import { Add } from "@mui/icons-material";
-import { getAllParentRules } from "./rule.actions";
+import { getAllRules } from "./rule.actions";
 import { headers } from "next/headers";
 
 export async function RuleList() {
-  const rules = await getAllParentRules();
+  const rules = await getAllRules();
   const header = headers();
   const url = header.get("x-url");
-
-  console.log(rules);
 
   return (
     <List>

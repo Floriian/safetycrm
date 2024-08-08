@@ -9,9 +9,9 @@ export const baseRuleSchema = z.object({
 });
 
 export type Rule = z.infer<typeof baseRuleSchema> & {
-  children: Rule[];
+  children?: Rule[];
 };
 
 export const ruleSchema: z.ZodType<Rule> = baseRuleSchema.extend({
-  children: z.lazy(() => ruleSchema.array()),
+  children: z.lazy(() => ruleSchema.array()).optional(),
 });

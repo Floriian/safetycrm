@@ -18,7 +18,7 @@ import {
   TextareaAutosize,
   TextField,
 } from "@mui/material";
-import { getAllRules } from "./rule.actions";
+import { getAllRules, getAllRulesWithoutTreeStructure } from "./rule.actions";
 
 interface Props {
   rule?: Rule;
@@ -47,8 +47,10 @@ export function RuleForm({ rule }: Props) {
   };
 
   useEffect(() => {
-    getAllRules().then((data) => setRules(data));
+    getAllRulesWithoutTreeStructure().then((data) => setRules(data));
   }, []);
+
+  useEffect(() => console.log("ruleform", rules), [rules]);
 
   return (
     <Paper sx={{ padding: "1rem" }}>

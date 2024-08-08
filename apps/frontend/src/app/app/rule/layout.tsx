@@ -1,8 +1,5 @@
 import { Grid, List, ListItem, Paper } from "@mui/material";
-import { getAllParentRules } from "./_components/rule.actions";
 import { RuleList } from "./_components/RuleList";
-
-export const revalidate = 0;
 
 export default async function RuleLayout({
   children,

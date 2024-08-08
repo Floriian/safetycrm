@@ -9,8 +9,8 @@ export const ruleApi = {
     const { data } = await api<Rule>(`/rules/${id}`);
     return data;
   },
-  getAllParents: async () => {
-    const { data } = await api<Rule[]>("/rules/parents");
+  getAllRulesWithoutTreeStructure: async () => {
+    const { data } = await api<Rule[]>("/rules/all");
     return data;
   },
 };
