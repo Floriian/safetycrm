@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { RulesService } from './rules.service';
 import { CreateRuleDto } from './dto/create-rule.dto';
 import { UpdateRuleDto } from './dto/update-rule.dto';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Rule } from './entities/rule.entity';
+import { RuleQueryDto } from './dto/rule-query.dto';
 
 @Controller('rules')
 @ApiTags(RulesController.name)
@@ -32,8 +34,8 @@ export class RulesController {
   }
 
   @Get('all')
-  all() {
-    return this.rulesService.all();
+  allRules(@Query() dto: RuleQueryDto) {
+    return this.rulesService.all(dto);
   }
 
   @Get(':id')

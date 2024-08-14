@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Rule } from "./rule.schema";
 import {
   Box,
@@ -19,22 +19,13 @@ import { Delete, Folder, FolderOpen } from "@mui/icons-material";
 
 interface Props {
   rule: Rule;
-  active?: boolean;
 }
 
-// TODO: use Link component!
-export function RuleItem({ rule, active }: Props) {
+export function RuleItem({ rule }: Props) {
   const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
   const theme = useTheme();
-
-  useEffect(() => {
-    if (rule.children && rule.children.length > 0) {
-      console.log({ rule });
-    } else {
-      console.log("no");
-    }
-  }, [rule]);
+  const params = useParams<{ id: string }>();
 
   const handleClick = (event: React.MouseEvent, ruleId: number) => {
     event.stopPropagation();
@@ -44,16 +35,10 @@ export function RuleItem({ rule, active }: Props) {
 
   return (
     <>
-      <ListItem
-        secondaryAction={
-          <IconButton edge="end">
-            <Delete />
-          </IconButton>
-        }
-      >
+      <ListItem>
         <ListItemButton
           onClick={(e: React.MouseEvent) => handleClick(e, rule!.id!)}
-          selected={active}
+          selected={+params.id === rule.id}
         >
           {rule.children && rule?.children?.length > 0 && (
             <ListItemIcon>{open ? <FolderOpen /> : <Folder />}</ListItemIcon>

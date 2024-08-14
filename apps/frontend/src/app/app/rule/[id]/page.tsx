@@ -7,7 +7,7 @@ interface Props {
   };
 }
 export default async function RulePage({ params: { id } }: Props) {
-  const rule = await getOneRuleById(+id);
-  console.log(rule);
-  return <RuleForm rule={rule || undefined} />;
+  const rule = id !== "new" ? await getOneRuleById(+id) : undefined;
+  console.log("rule", rule);
+  return <RuleForm rule={rule} />;
 }

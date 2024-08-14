@@ -1,16 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Rule, ruleSchema } from "./rule.schema";
+import { useEffect, useMemo, useState } from "react";
+import {
+  createOrEditRule,
+  CreateOrEditRule,
+  Rule,
+  ruleSchema,
+} from "./rule.schema";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   FormControl,
   FormGroup,
+  IconButton,
   InputLabel,
   MenuItem,
   Paper,
@@ -18,7 +25,8 @@ import {
   TextareaAutosize,
   TextField,
 } from "@mui/material";
-import { getAllRules, getAllRulesWithoutTreeStructure } from "./rule.actions";
+import { createRule, getAllRules } from "./rule.actions";
+import { Delete } from "@mui/icons-material";
 
 interface Props {
   rule?: Rule;
@@ -28,29 +36,44 @@ export function RuleForm({ rule }: Props) {
   const [success, setSuccess] = useState<boolean>();
 
   const [rules, setRules] = useState<Rule[]>();
+  const mapRulesToAutoComplete = useMemo(
+    () => rules?.map((rule) => ({ label: rule.name, id: rule.id })),
+    [rules]
+  );
 
   const router = useRouter();
   const {
     formState: { errors },
     register,
     handleSubmit,
+    getValues,
     setError,
-  } = useForm<Rule>({
-    resolver: zodResolver(ruleSchema),
+    control,
+  } = useForm<CreateOrEditRule>({
+    resolver: zodResolver(createOrEditRule),
     defaultValues: rule ?? {},
   });
 
-  const onSubmit: SubmitHandler<Rule> = async (data) => {
-    console.log(data);
-    if (data.id) await console.log("updating rule");
-    if (!data.id) await console.log("creating rule");
+  const onSubmit: SubmitHandler<CreateOrEditRule> = async (data) => {
+    if (data.id) {
+      console.log("updating rule...");
+    }
+
+    if (!data.id) {
+      const response = await createRule(data);
+      setSuccess(response?.success);
+      if (response?.success) {
+        router.push(`/app/rule/${response?.data?.id}`);
+        router.refresh();
+      }
+    }
   };
 
   useEffect(() => {
-    getAllRulesWithoutTreeStructure().then((data) => setRules(data));
+    getAllRules()
+      .then((d) => setRules(d))
+      .catch(console.error);
   }, []);
-
-  useEffect(() => console.log("ruleform", rules), [rules]);
 
   return (
     <Paper sx={{ padding: "1rem" }}>
@@ -58,8 +81,20 @@ export function RuleForm({ rule }: Props) {
         <FormGroup
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          <Box sx={{ display: "flex", width: "100%", justifyContent: "end" }}>
-            <Button type="submit">Save</Button>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "end",
+              gap: "1rem",
+            }}
+          >
+            <IconButton type="submit">
+              <Delete />
+            </IconButton>
+            <Button type="submit" variant="contained">
+              Save
+            </Button>
           </Box>
           {success && (
             <Alert onClose={() => setSuccess(!success)}>
@@ -78,14 +113,17 @@ export function RuleForm({ rule }: Props) {
             {...register("description")}
           />
           <FormControl fullWidth>
-            <InputLabel id="parent-rule">Parent rule</InputLabel>
-            <Select labelId="parent-rule" id="select-parent">
-              {rules?.map((rule) => (
-                <MenuItem key={rule.id} value={rule.id}>
-                  {rule.name}
-                </MenuItem>
-              ))}
-            </Select>
+            <Controller
+              control={control}
+              name="parentId"
+              render={(props) => (
+                <Autocomplete
+                  options={mapRulesToAutoComplete!}
+                  onChange={(e, data) => props.field.onChange(data?.id)}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              )}
+            />
           </FormControl>
         </FormGroup>
       </Box>

@@ -1,11 +1,16 @@
 "use server";
 
-import { logError } from "@/utils";
+import { createUrlQuery, logError } from "@/utils";
 import { ruleApi } from "./rule.api";
+import { ApiError, CreateResponse } from "@/types";
+import { CreateOrEditRule, Rule } from "./rule.schema";
+import { isAxiosError } from "axios";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-export const getAllRules = async () => {
+export const getTreeRule = async () => {
   try {
-    return await ruleApi.findAll();
+    return await ruleApi.findAllWithTreeStructure();
   } catch (e) {
     logError("getRules", e);
   }
@@ -19,10 +24,37 @@ export const getOneRuleById = async (id: number) => {
   }
 };
 
-export const getAllRulesWithoutTreeStructure = async () => {
+export const getAllRules = async (
+  searchBy?: Partial<Record<keyof Rule, unknown>>
+) => {
   try {
-    return await ruleApi.getAllRulesWithoutTreeStructure();
+    const urlQueries = searchBy && createUrlQuery(searchBy);
+    return await ruleApi.getAll(urlQueries ? urlQueries : "");
   } catch (e) {
-    logError("getAllParentRules", e);
+    logError("searchRules", e);
+  }
+};
+
+export const createRule = async (rule: CreateOrEditRule) => {
+  try {
+    const data = await ruleApi.create(rule);
+    return { success: true, data } satisfies CreateResponse<Rule>;
+  } catch (e) {
+    if (isAxiosError<ApiError>(e)) {
+      return {
+        success: false,
+        data: e.response?.data,
+      } satisfies CreateResponse<ApiError>;
+    }
+    logError("createRule", e);
+  }
+};
+
+export const deleteRule = async (id: number) => {
+  try {
+    revalidatePath("/app/rule", "layout");
+    return await ruleApi.delete(id);
+  } catch (e) {
+    logError("deleteRule", e);
   }
 };

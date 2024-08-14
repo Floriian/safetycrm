@@ -6,8 +6,6 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Tree,
   TreeChildren,
@@ -32,12 +30,10 @@ export class Rule {
   @ApiProperty()
   description: string;
 
-  //@ManyToOne(() => Rule, (rule) => rule.children)
-  @TreeParent()
+  @TreeParent({ onDelete: 'CASCADE' })
   @ApiProperty({ type: Rule })
   parent: Rule;
 
-  //@OneToMany(() => Rule, (rule) => rule.parent)
   @ApiProperty({ type: Rule })
   @TreeChildren()
   children: Rule[];
