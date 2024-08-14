@@ -38,6 +38,9 @@ export const getAllRules = async (
 export const createRule = async (rule: CreateOrEditRule) => {
   try {
     const data = await ruleApi.create(rule);
+    revalidatePath(`/app/rule`, "layout");
+    revalidatePath(`/app/rule/new`, "layout");
+    revalidatePath(`/app/rule/${data.id}`, "layout");
     return { success: true, data } satisfies CreateResponse<Rule>;
   } catch (e) {
     if (isAxiosError<ApiError>(e)) {

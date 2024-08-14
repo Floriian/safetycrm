@@ -62,10 +62,8 @@ export function RuleForm({ rule }: Props) {
     if (!data.id) {
       const response = await createRule(data);
       setSuccess(response?.success);
-      if (response?.success) {
-        router.push(`/app/rule/${response?.data?.id}`);
-        router.refresh();
-      }
+      router.prefetch("/app/rule");
+      router.refresh();
     }
   };
 
