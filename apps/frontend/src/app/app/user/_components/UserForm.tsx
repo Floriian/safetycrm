@@ -51,8 +51,6 @@ export function UserForm({ user }: Props) {
     }
   };
 
-  useEffect(() => console.log(errors), [errors]);
-
   return (
     <Paper sx={{ padding: "1rem" }}>
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>

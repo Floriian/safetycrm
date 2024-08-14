@@ -1,6 +1,6 @@
 import { api } from "@/utils";
 import { User } from "./user.schema";
-import { ApiUpdateResponse } from "@/types";
+import type { ApiUpdateResponse } from "@/types";
 
 export const userApi = {
   getAll: async () => {

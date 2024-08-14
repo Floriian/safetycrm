@@ -2,7 +2,7 @@
 
 import { createUrlQuery, logError } from "@/utils";
 import { ruleApi } from "./rule.api";
-import { ApiError, CreateResponse } from "@/types";
+import { ApiError, CreateResponse, UpdateResponse } from "@/types";
 import { CreateOrEditRule, Rule } from "./rule.schema";
 import { isAxiosError } from "axios";
 import { revalidatePath } from "next/cache";
@@ -59,5 +59,23 @@ export const deleteRule = async (id: number) => {
     return await ruleApi.delete(id);
   } catch (e) {
     logError("deleteRule", e);
+  }
+};
+
+export const updateRule = async (id: number, _data: CreateOrEditRule) => {
+  try {
+    const response = await ruleApi.update(id, _data);
+    await revalidatePath(`/app/rule/${id}`);
+    return {
+      success: true,
+    } satisfies UpdateResponse<Rule>;
+  } catch (e) {
+    if (isAxiosError<ApiError>(e)) {
+      return {
+        data: e.response?.data,
+        success: false,
+      } satisfies UpdateResponse<ApiError>;
+    }
+    logError("updateRule", e);
   }
 };

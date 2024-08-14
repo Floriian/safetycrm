@@ -25,7 +25,7 @@ import {
   TextareaAutosize,
   TextField,
 } from "@mui/material";
-import { createRule, getAllRules } from "./rule.actions";
+import { createRule, getAllRules, updateRule } from "./rule.actions";
 import { Delete } from "@mui/icons-material";
 
 interface Props {
@@ -56,7 +56,9 @@ export function RuleForm({ rule }: Props) {
 
   const onSubmit: SubmitHandler<CreateOrEditRule> = async (data) => {
     if (data.id) {
-      console.log("updating rule...");
+      const response = await updateRule(data.id, data);
+      setSuccess(response?.success);
+      router.refresh();
     }
 
     if (!data.id) {

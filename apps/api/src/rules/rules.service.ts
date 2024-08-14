@@ -48,8 +48,31 @@ export class RulesService {
     return await this.ruleRepository.findOneById(id);
   }
 
-  update(id: number, updateRuleDto: UpdateRuleDto) {
-    return `This action updates a #${id} rule`;
+  async update(id: number, updateRuleDto: UpdateRuleDto) {
+    try {
+      const currentRule = await this.ruleRepository.findOneById(id);
+
+      //If rule doesnt have parent rule, but the DTO has parentID, assign the parent rule to currentRule.
+      if (!currentRule.parent && updateRuleDto.parentId) {
+        const parentRule = await this.ruleRepository.findOneById(
+          updateRuleDto.parentId,
+        );
+        if (!parentRule) throw new ParentRuleNotFoundException();
+
+        currentRule.parent = parentRule;
+      }
+
+      return await this.ruleRepository.update(
+        { id },
+        { ...currentRule, ...updateRuleDto },
+      );
+    } catch (e) {
+      if (e instanceof QueryFailedError) {
+        if (e.message.includes('duplicate key violates'))
+          throw new RuleAlreadyExistsException();
+      }
+      throw e;
+    }
   }
 
   async remove(id: number) {

@@ -1,5 +1,6 @@
 import { api } from "@/utils";
 import type { CreateOrEditRule, Rule } from "./rule.schema";
+import type { ApiUpdateResponse } from "@/types";
 export const ruleApi = {
   findAllWithTreeStructure: async () => {
     const { data } = await api<Rule[]>(`/rules`);
@@ -19,6 +20,10 @@ export const ruleApi = {
   },
   delete: async (id: number) => {
     const { data } = await api.delete(`/rules/${id}`);
+    return data;
+  },
+  update: async (id: number, rule: CreateOrEditRule) => {
+    const { data } = await api.patch<ApiUpdateResponse>(`/rules/${id}`, rule);
     return data;
   },
 };

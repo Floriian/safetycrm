@@ -8,6 +8,5 @@ interface Props {
 }
 export default async function RulePage({ params: { id } }: Props) {
   const rule = id !== "new" ? await getOneRuleById(+id) : undefined;
-  console.log("rule", rule);
   return <RuleForm rule={rule} />;
 }

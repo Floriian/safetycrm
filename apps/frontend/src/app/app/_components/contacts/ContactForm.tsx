@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Contact } from "./contact.schema";
 import { deleteContact } from "./contact.action";
+import { logError } from "@/utils";
 
 type Contacts = { contacts: Contact[] };
 
@@ -30,7 +31,7 @@ export function ContactForm() {
       const result = deleteContact(fieldValues!.id!);
       remove(index);
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   };
   return (

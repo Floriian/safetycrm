@@ -32,7 +32,6 @@ export function ClientForm({ client }: Props) {
   });
 
   const onSubmit: SubmitHandler<Client> = async (data) => {
-    console.log(data.contacts);
     if (data.id) await updateClient(data.id, data);
     if (!data.id) await createClient(data);
   };
