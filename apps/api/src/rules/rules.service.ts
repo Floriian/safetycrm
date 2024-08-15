@@ -53,7 +53,6 @@ export class RulesService {
   }
 
   async update(id: number, updateRuleDto: UpdateRuleDto) {
-    console.log(updateRuleDto);
     try {
       const currentRule = await this.ruleRepository.findOneById(id);
 
