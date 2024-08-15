@@ -62,10 +62,9 @@ export class RulesService {
         currentRule.parent = parentRule;
       }
 
-      return await this.ruleRepository.update(
-        { id },
-        { ...currentRule, ...updateRuleDto },
-      );
+      Object.assign(currentRule, updateRuleDto);
+
+      return await this.ruleRepository.save(currentRule);
     } catch (e) {
       if (e instanceof QueryFailedError) {
         if (e.message.includes('duplicate key violates'))

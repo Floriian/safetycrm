@@ -10,16 +10,17 @@ import {
   Typography,
 } from "@mui/material";
 import { RuleItem } from "./RuleItem";
-import { Add } from "@mui/icons-material";
+import { Add, ArrowDownward } from "@mui/icons-material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Rule } from "./rule.schema";
 import { getTreeRule, getAllRules } from "./rule.actions";
-import { useParams } from "next/navigation";
 
 export function RuleList() {
   const [rules, setRules] = useState<Rule[]>();
   const [input, setInput] = useState<string>();
+  const [sortByDate, setSortByDate] = useState<boolean>(false);
+  const [sortByName, setSortByName] = useState<boolean>(false);
   const [{ error, loading }, setFetchStatus] = useState<{
     loading: boolean;
     error: boolean;
@@ -39,6 +40,17 @@ export function RuleList() {
     }
   }, [input]);
 
+  useEffect(() => {
+    setRules((prev) =>
+      prev?.sort((current, next) => {
+        if (sortByDate) return 1;
+        if (sortByName) return -1;
+
+        return 0;
+      })
+    );
+  }, [sortByDate, sortByName]);
+
   return (
     <List>
       <ListSubheader>
@@ -50,11 +62,24 @@ export function RuleList() {
             justifyContent: "space-between",
           }}
         >
-          <TextField
-            size="small"
-            label="Search rule"
-            onChange={(e) => setInput(e.target.value)}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <TextField
+              size="small"
+              label="Search rule"
+              onChange={(e) => setInput(e.target.value)}
+            />
+
+            <ListItemButton onClick={() => setSortByDate(!sortByDate)}>
+              <ArrowDownward />
+            </ListItemButton>
+          </Box>
           <Link href="/app/rule/new">
             <ListItemButton sx={{ display: "flex", justifyContent: "center" }}>
               <Add />
