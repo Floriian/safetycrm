@@ -15,41 +15,30 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Rule } from "./rule.schema";
 import { getTreeRule, getAllRules } from "./rule.actions";
+import { useQuery } from "@tanstack/react-query";
+import { CONSTANTS } from "@/constants";
 
 export function RuleList() {
-  const [rules, setRules] = useState<Rule[]>();
   const [input, setInput] = useState<string>();
   const [sortByDate, setSortByDate] = useState<boolean>(false);
   const [sortByName, setSortByName] = useState<boolean>(false);
-  const [{ error, loading }, setFetchStatus] = useState<{
-    loading: boolean;
-    error: boolean;
-  }>({ error: false, loading: true });
+
+  const {
+    data: rules,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: [CONSTANTS.query.RULE],
+    queryFn:
+      input === undefined || input === ""
+        ? () => getTreeRule()
+        : () => getAllRules({ name: input }),
+  });
 
   useEffect(() => {
-    if (input === undefined || input === "") {
-      getTreeRule()
-        .then((data) => setRules(data!))
-        .catch((e) => setFetchStatus((prev) => ({ ...prev, error: true })))
-        .finally(() => setFetchStatus((prev) => ({ ...prev, loading: false })));
-    } else {
-      getAllRules({ name: input })
-        .then((data) => setRules(data!))
-        .catch((e) => setFetchStatus((prev) => ({ ...prev, error: true })))
-        .finally(() => setFetchStatus((prev) => ({ ...prev, loading: false })));
-    }
+    refetch();
   }, [input]);
-
-  useEffect(() => {
-    setRules((prev) =>
-      prev?.sort((current, next) => {
-        if (sortByDate) return 1;
-        if (sortByName) return -1;
-
-        return 0;
-      })
-    );
-  }, [sortByDate, sortByName]);
 
   return (
     <List>
@@ -87,7 +76,7 @@ export function RuleList() {
           </Link>
         </Box>
       </ListSubheader>
-      {loading && (
+      {isLoading && (
         <ListItem sx={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />
         </ListItem>
@@ -95,7 +84,7 @@ export function RuleList() {
       {rules && rules?.length > 0 && (
         <>{rules?.map((rule) => <RuleItem rule={rule} key={rule.id} />)}</>
       )}
-      {rules && !loading && rules?.length <= 0 && (
+      {rules && !isLoading && rules?.length <= 0 && (
         <ListItem>
           <Typography textAlign="center">There are no rules :(</Typography>
         </ListItem>

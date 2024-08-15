@@ -27,6 +27,8 @@ import {
 } from "@mui/material";
 import { createRule, getAllRules, updateRule } from "./rule.actions";
 import { Delete } from "@mui/icons-material";
+import { useQueryClient } from "@tanstack/react-query";
+import { CONSTANTS } from "@/constants";
 
 interface Props {
   rule?: Rule;
@@ -41,6 +43,7 @@ export function RuleForm({ rule }: Props) {
     [rules]
   );
 
+  const queryClient = useQueryClient();
   const router = useRouter();
   const {
     formState: { errors },
@@ -64,8 +67,6 @@ export function RuleForm({ rule }: Props) {
     if (!data.id) {
       const response = await createRule(data);
       setSuccess(response?.success);
-      router.prefetch("/app/rule");
-      router.refresh();
     }
   };
 
@@ -74,6 +75,11 @@ export function RuleForm({ rule }: Props) {
       .then((d) => setRules(d))
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (success)
+      queryClient.invalidateQueries({ queryKey: [CONSTANTS.query.RULE] });
+  }, [queryClient, success]);
 
   return (
     <Paper sx={{ padding: "1rem" }}>
