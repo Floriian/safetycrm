@@ -6,15 +6,19 @@ import {
   Patch,
   Param,
   Delete,
-  Request,
+  Query,
 } from '@nestjs/common';
 import { RulesService } from './rules.service';
 import { CreateRuleDto } from './dto/create-rule.dto';
 import { UpdateRuleDto } from './dto/update-rule.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Rule } from './entities/rule.entity';
 import { RuleQueryDto } from './dto/rule-query.dto';
-import { Request as ExpressRequest } from 'express';
 
 @Controller('rules')
 @ApiTags(RulesController.name)
@@ -39,11 +43,12 @@ export class RulesController {
 
   //Why @Query doesnt parse the url query???
   @Get('all')
+  @ApiQuery({ type: RuleQueryDto })
   @ApiOkResponse({
     type: [Rule],
   })
-  allRules(@Request() req: ExpressRequest) {
-    return this.rulesService.all(req.query as unknown as RuleQueryDto);
+  allRules(@Query() query: RuleQueryDto) {
+    return this.rulesService.all(query);
   }
 
   @Get(':id')

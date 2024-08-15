@@ -7,10 +7,11 @@ import {
   ListItemButton,
   ListSubheader,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { RuleItem } from "./RuleItem";
-import { Add, ArrowDownward } from "@mui/icons-material";
+import { Add, ArrowDownward, ArrowUpward } from "@mui/icons-material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Rule } from "./rule.schema";
@@ -20,8 +21,20 @@ import { CONSTANTS } from "@/constants";
 
 export function RuleList() {
   const [input, setInput] = useState<string>();
-  const [sortByDate, setSortByDate] = useState<boolean>(false);
-  const [sortByName, setSortByName] = useState<boolean>(false);
+  const [orderBy, setOrderBy] = useState<
+    {
+      field: keyof Rule;
+      isASC: boolean;
+    }[]
+  >([
+    { field: "name", isASC: false },
+    { field: "createdAt", isASC: false },
+  ]);
+
+  const orderByFields = orderBy
+    .map((o) => (o.isASC ? o.field : undefined))
+    .filter((o): o is keyof Rule => o !== undefined);
+  useEffect(() => console.log(orderByFields), [orderByFields]);
 
   const {
     data: rules,
@@ -33,12 +46,30 @@ export function RuleList() {
     queryFn:
       input === undefined || input === ""
         ? () => getTreeRule()
-        : () => getAllRules({ name: input }),
+        : () =>
+            getAllRules({
+              name: input,
+              orderFields: orderByFields,
+            }),
   });
+
+  const handleOrderBy = (fieldName: keyof Rule) => {
+    setOrderBy((prev) => {
+      const existingField = prev!.find((value) => value.field === fieldName);
+
+      if (existingField) {
+        return prev!.map((value) =>
+          value.field === fieldName ? { ...value, isASC: !value.isASC } : value
+        );
+      } else {
+        return [...prev!, { field: fieldName, isASC: true }];
+      }
+    });
+  };
 
   useEffect(() => {
     refetch();
-  }, [input]);
+  }, [input, orderByFields]);
 
   return (
     <List>
@@ -65,9 +96,13 @@ export function RuleList() {
               onChange={(e) => setInput(e.target.value)}
             />
 
-            <ListItemButton onClick={() => setSortByDate(!sortByDate)}>
-              <ArrowDownward />
-            </ListItemButton>
+            {orderBy.map((item) => (
+              <Tooltip title={`Order by ${item.field}`} key={item.field}>
+                <ListItemButton onClick={() => handleOrderBy(item.field)}>
+                  {item.isASC ? <ArrowDownward /> : <ArrowUpward />}
+                </ListItemButton>
+              </Tooltip>
+            ))}
           </Box>
           <Link href="/app/rule/new">
             <ListItemButton sx={{ display: "flex", justifyContent: "center" }}>

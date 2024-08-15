@@ -3,9 +3,15 @@ import { CreateRuleDto } from './dto/create-rule.dto';
 import { UpdateRuleDto } from './dto/update-rule.dto';
 import { RuleRepository } from './repositories/rule.repository';
 import { ParentRuleNotFoundException } from './exceptions/parent-rule-not-found.exception';
-import { QueryFailedError } from 'typeorm';
+import {
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  QueryFailedError,
+} from 'typeorm';
 import { RuleAlreadyExistsException } from './exceptions/rule-already-exists.exception';
 import { RuleQueryDto } from './dto/rule-query.dto';
+import { Rule } from './entities/rule.entity';
 
 @Injectable()
 export class RulesService {
@@ -41,10 +47,11 @@ export class RulesService {
   }
 
   async all(dto: RuleQueryDto) {
+    const whereAttributes = this.buildWhereAttributesFromDto(dto);
+    const orderAttributes = this.buildOrderValuesFromDto(dto);
     return await this.ruleRepository.find({
-      where: {
-        ...(dto.name && { name: dto.name }),
-      },
+      where: whereAttributes,
+      order: orderAttributes,
     });
   }
 
@@ -56,7 +63,7 @@ export class RulesService {
     try {
       const currentRule = await this.ruleRepository.findOneById(id);
 
-      //If rule doesnt have parent rule, but the DTO has parentID, assign the parent rule to currentRule.
+      //If rule doesnt has parent rule, but the DTO has parentID, assign the parent rule to currentRule.
       if (!currentRule.parent && updateRuleDto.parentId) {
         const parentRule = await this.ruleRepository.findOneById(
           updateRuleDto.parentId,
@@ -66,12 +73,28 @@ export class RulesService {
         currentRule.parent = parentRule;
       }
 
-      //If rule has a parentRule, but DTO doesn't has parentID, remove children from the parent
+      //If rule has parentRule, but DTO doesn't has parentID, remove children from the parent
       if (currentRule.parent && !updateRuleDto.parentId) {
         const parentRule =
           await this.ruleRepository.findDescendantsTree(currentRule);
+
+        if (!parentRule) throw new ParentRuleNotFoundException();
         parentRule.parent = null;
         await this.ruleRepository.save(parentRule);
+      }
+
+      //If rule has parent rule, but dto is changed, change currentrule parent.
+      if (
+        updateRuleDto.parentId &&
+        currentRule.parent.id !== updateRuleDto.parentId &&
+        currentRule.parent
+      ) {
+        const parentRule = await this.ruleRepository.findOneById(
+          updateRuleDto.parentId,
+        );
+        if (!parentRule) throw new ParentRuleNotFoundException();
+
+        currentRule.parent = parentRule;
       }
 
       Object.assign(currentRule, updateRuleDto);
@@ -89,5 +112,34 @@ export class RulesService {
   async remove(id: number) {
     await this.findOne(id);
     return await this.ruleRepository.delete(id);
+  }
+
+  private buildOrderValuesFromDto(dto: RuleQueryDto): FindOptionsOrder<Rule> {
+    const orderOptions: FindOptionsOrder<Rule> = {};
+
+    const orderByFields = dto.orderByFields as unknown as string | undefined;
+    if (typeof orderByFields === 'string') {
+      orderByFields
+        .split(',')
+        .filter((field): field is keyof Rule => field !== '')
+        .forEach((field) => {
+          orderOptions[field] = 'ASC';
+        });
+    }
+
+    return orderOptions;
+  }
+
+  private buildWhereAttributesFromDto(
+    dto: RuleQueryDto,
+  ): FindOptionsWhere<Rule> | FindOptionsWhere<Rule>[] {
+    const options: FindOptionsWhere<Rule> | FindOptionsWhere<Rule>[] = [];
+    for (const [key, value] of Object.entries(dto)) {
+      if (key !== 'orderByFields') {
+        options.push({ [key]: ILike(`%${value}%`) });
+      }
+    }
+
+    return options;
   }
 }

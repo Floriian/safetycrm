@@ -25,10 +25,18 @@ export const getOneRuleById = async (id: number) => {
 };
 
 export const getAllRules = async (
-  searchBy?: Partial<Record<keyof Rule, unknown>>
+  searchBy?: Partial<Record<keyof Rule, unknown>> & {
+    orderFields?: Array<keyof Rule>;
+  }
 ) => {
   try {
-    const urlQueries = searchBy && createUrlQuery(searchBy);
+    const createUrlQueryObject = {
+      ...searchBy,
+      orderByFields: searchBy?.orderFields?.join(","),
+    };
+    console.log(createUrlQueryObject);
+    const urlQueries = searchBy && createUrlQuery(createUrlQueryObject);
+    console.log(urlQueries);
     return await ruleApi.getAll(urlQueries ? urlQueries : "");
   } catch (e) {
     logError("searchRules", e);

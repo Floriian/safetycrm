@@ -33,6 +33,10 @@ export function RuleItem({ rule }: Props) {
     setOpen(!open);
   };
 
+  useEffect(() => {
+    if (+params.id === rule.id) setOpen(true);
+  }, [params.id, rule.id]);
+
   return (
     <>
       <ListItem>

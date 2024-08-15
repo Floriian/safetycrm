@@ -22,7 +22,7 @@ export const createOrEditRule = z.object({
   id: z.number().optional(),
   name: z.string(),
   description: z.string().optional(),
-  parentId: z.number().optional(),
+  parentId: z.number().optional().nullable(),
 });
 
 export type CreateOrEditRule = z.infer<typeof createOrEditRule>;

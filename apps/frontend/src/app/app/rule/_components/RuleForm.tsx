@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import {
   createOrEditRule,
   CreateOrEditRule,
@@ -36,6 +36,7 @@ interface Props {
 
 export function RuleForm({ rule }: Props) {
   const [success, setSuccess] = useState<boolean>();
+
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -43,13 +44,6 @@ export function RuleForm({ rule }: Props) {
     queryKey: [CONSTANTS.query.RULE_AUTOCOMPLETE_LIST],
     queryFn: () => getAllRules(),
   });
-
-  const mapRulesToAutoComplete = useMemo(
-    () =>
-      rules !== undefined &&
-      rules.map((rule) => ({ label: rule.name, id: rule.id })),
-    [rules]
-  );
 
   const {
     formState: { errors, isValid },
@@ -59,6 +53,7 @@ export function RuleForm({ rule }: Props) {
     setError,
     setValue,
     control,
+    watch,
   } = useForm<CreateOrEditRule>({
     resolver: zodResolver(createOrEditRule),
     defaultValues:
@@ -68,7 +63,12 @@ export function RuleForm({ rule }: Props) {
       } ?? {},
   });
 
+  const parentFieldWatcher = watch("parentId");
+
   const formValues = getValues();
+  const mapRulesToAutoComplete =
+    rules !== undefined &&
+    rules.map((rule) => ({ label: rule.name, id: rule.id }));
 
   const onSubmit: SubmitHandler<CreateOrEditRule> = async (data) => {
     if (data.id) {
@@ -85,6 +85,11 @@ export function RuleForm({ rule }: Props) {
       queryKey: [CONSTANTS.query.RULES],
     });
   };
+
+  const autocompletValue =
+    mapRulesToAutoComplete &&
+    watch("parentId") &&
+    mapRulesToAutoComplete.find((rule) => rule.id === formValues.parentId);
 
   return (
     <Paper sx={{ padding: "1rem" }}>
@@ -129,40 +134,29 @@ export function RuleForm({ rule }: Props) {
               name="parentId"
               render={(props) => (
                 <Autocomplete
-                  options={mapRulesToAutoComplete || []}
+                  options={
+                    mapRulesToAutoComplete || [{ id: undefined, label: "" }]
+                  }
                   onChange={(e, data) => {
-                    //@ts-ignore
+                    console.log(data);
+                    if (!data) return;
+
+                    if (data === null) setValue("parentId", undefined);
+
                     if (data?.id === formValues.id) {
                       setError("parentId", { message: "You cant do this!" });
                       setValue("parentId", undefined);
                     }
-                    //@ts-ignore
-                    return props.field.onChange(data?.id);
+
+                    return props.field.onChange(data.id);
                   }}
-                  value={
-                    mapRulesToAutoComplete &&
-                    mapRulesToAutoComplete.find(
-                      (rule) => rule.id === formValues.parentId
-                    )
-                  }
-                  defaultValue={{ id: undefined, label: "" }}
+                  value={autocompletValue}
                   renderInput={(params) => (
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-between" }}
-                    >
-                      <TextField
-                        {...params}
-                        helperText={errors.parentId?.message}
-                        error={!!errors.parentId?.message}
-                        sx={{ maxWidth: "90%" }}
-                      />
-                      <IconButton
-                        size="large"
-                        onClick={() => setValue("parentId", undefined)}
-                      >
-                        <Remove />
-                      </IconButton>
-                    </Box>
+                    <TextField
+                      {...params}
+                      helperText={errors.parentId?.message}
+                      error={!!errors.parentId?.message}
+                    />
                   )}
                 />
               )}
