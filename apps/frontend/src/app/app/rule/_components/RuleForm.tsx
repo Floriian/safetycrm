@@ -26,8 +26,8 @@ import {
   TextField,
 } from "@mui/material";
 import { createRule, getAllRules, updateRule } from "./rule.actions";
-import { Delete } from "@mui/icons-material";
-import { useQueryClient } from "@tanstack/react-query";
+import { Delete, Remove } from "@mui/icons-material";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CONSTANTS } from "@/constants";
 
 interface Props {
@@ -36,50 +36,55 @@ interface Props {
 
 export function RuleForm({ rule }: Props) {
   const [success, setSuccess] = useState<boolean>();
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
-  const [rules, setRules] = useState<Rule[]>();
+  const { data: rules } = useQuery({
+    queryKey: [CONSTANTS.query.RULE_AUTOCOMPLETE_LIST],
+    queryFn: () => getAllRules(),
+  });
+
   const mapRulesToAutoComplete = useMemo(
-    () => rules?.map((rule) => ({ label: rule.name, id: rule.id })),
+    () =>
+      rules !== undefined &&
+      rules.map((rule) => ({ label: rule.name, id: rule.id })),
     [rules]
   );
 
-  const queryClient = useQueryClient();
-  const router = useRouter();
   const {
-    formState: { errors },
+    formState: { errors, isValid },
     register,
     handleSubmit,
     getValues,
     setError,
+    setValue,
     control,
   } = useForm<CreateOrEditRule>({
     resolver: zodResolver(createOrEditRule),
-    defaultValues: rule ?? {},
+    defaultValues:
+      {
+        ...rule,
+        parentId: rule?.parent?.id ?? undefined,
+      } ?? {},
   });
+
+  const formValues = getValues();
 
   const onSubmit: SubmitHandler<CreateOrEditRule> = async (data) => {
     if (data.id) {
       const response = await updateRule(data.id, data);
       setSuccess(response?.success);
-      router.refresh();
     }
 
     if (!data.id) {
       const response = await createRule(data);
       setSuccess(response?.success);
+      if (response?.success) router.push(`/app/rule/${response?.data.id}`);
     }
+    queryClient.invalidateQueries({
+      queryKey: [CONSTANTS.query.RULES],
+    });
   };
-
-  useEffect(() => {
-    getAllRules()
-      .then((d) => setRules(d))
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (success)
-      queryClient.invalidateQueries({ queryKey: [CONSTANTS.query.RULE] });
-  }, [queryClient, success]);
 
   return (
     <Paper sx={{ padding: "1rem" }}>
@@ -124,9 +129,41 @@ export function RuleForm({ rule }: Props) {
               name="parentId"
               render={(props) => (
                 <Autocomplete
-                  options={mapRulesToAutoComplete!}
-                  onChange={(e, data) => props.field.onChange(data?.id)}
-                  renderInput={(params) => <TextField {...params} />}
+                  options={mapRulesToAutoComplete || []}
+                  onChange={(e, data) => {
+                    //@ts-ignore
+                    if (data?.id === formValues.id) {
+                      setError("parentId", { message: "You cant do this!" });
+                      setValue("parentId", undefined);
+                    }
+                    //@ts-ignore
+                    return props.field.onChange(data?.id);
+                  }}
+                  value={
+                    mapRulesToAutoComplete &&
+                    mapRulesToAutoComplete.find(
+                      (rule) => rule.id === formValues.parentId
+                    )
+                  }
+                  defaultValue={{ id: undefined, label: "" }}
+                  renderInput={(params) => (
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                    >
+                      <TextField
+                        {...params}
+                        helperText={errors.parentId?.message}
+                        error={!!errors.parentId?.message}
+                        sx={{ maxWidth: "90%" }}
+                      />
+                      <IconButton
+                        size="large"
+                        onClick={() => setValue("parentId", undefined)}
+                      >
+                        <Remove />
+                      </IconButton>
+                    </Box>
+                  )}
                 />
               )}
             />

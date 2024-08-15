@@ -29,7 +29,7 @@ export function RuleList() {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: [CONSTANTS.query.RULE],
+    queryKey: [CONSTANTS.query.RULES],
     queryFn:
       input === undefined || input === ""
         ? () => getTreeRule()

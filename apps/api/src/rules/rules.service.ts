@@ -33,7 +33,11 @@ export class RulesService {
   }
 
   async findAll() {
-    return await this.ruleRepository.findTrees();
+    return (await this.ruleRepository.findTrees()).sort((current, next) => {
+      if (current.children.length < next.children.length) return 1;
+      if (current.children.length > next.children.length) return -1;
+      return 0;
+    });
   }
 
   async all(dto: RuleQueryDto) {
@@ -49,6 +53,7 @@ export class RulesService {
   }
 
   async update(id: number, updateRuleDto: UpdateRuleDto) {
+    console.log(updateRuleDto);
     try {
       const currentRule = await this.ruleRepository.findOneById(id);
 
@@ -60,6 +65,14 @@ export class RulesService {
         if (!parentRule) throw new ParentRuleNotFoundException();
 
         currentRule.parent = parentRule;
+      }
+
+      //If rule has a parentRule, but DTO doesn't has parentID, remove children from the parent
+      if (currentRule.parent && !updateRuleDto.parentId) {
+        const parentRule =
+          await this.ruleRepository.findDescendantsTree(currentRule);
+        parentRule.parent = null;
+        await this.ruleRepository.save(parentRule);
       }
 
       Object.assign(currentRule, updateRuleDto);

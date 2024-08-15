@@ -1,1 +1,2 @@
-export const RULE = "RULES";
+export const RULES = "RULES";
+export const RULE_AUTOCOMPLETE_LIST = "RULE_AUTOCOMPLETE_LIST";

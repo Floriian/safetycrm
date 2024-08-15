@@ -39,6 +39,7 @@ export function RuleItem({ rule }: Props) {
         <ListItemButton
           onClick={(e: React.MouseEvent) => handleClick(e, rule!.id!)}
           selected={+params.id === rule.id}
+          autoFocus={+params.id === rule.id}
         >
           {rule.children && rule?.children?.length > 0 && (
             <ListItemIcon>{open ? <FolderOpen /> : <Folder />}</ListItemIcon>
