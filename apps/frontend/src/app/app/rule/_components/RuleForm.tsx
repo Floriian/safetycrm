@@ -25,10 +25,16 @@ import {
   TextareaAutosize,
   TextField,
 } from "@mui/material";
-import { createRule, getAllRules, updateRule } from "./rule.actions";
+import {
+  createRule,
+  deleteRule,
+  getAllRules,
+  updateRule,
+} from "./rule.actions";
 import { Delete, Remove } from "@mui/icons-material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CONSTANTS } from "@/constants";
+import { DeleteRuleModal } from "./DeleteRuleModal";
 
 interface Props {
   rule?: Rule;
@@ -36,6 +42,7 @@ interface Props {
 
 export function RuleForm({ rule }: Props) {
   const [success, setSuccess] = useState<boolean>();
+  const [open, setOpen] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -79,11 +86,22 @@ export function RuleForm({ rule }: Props) {
     if (!data.id) {
       const response = await createRule(data);
       setSuccess(response?.success);
-      if (response?.success) router.push(`/app/rule/${response?.data.id}`);
+      if (response?.success)
+        router.push(`/app/rule/${response?.data.id}/details`);
     }
     queryClient.invalidateQueries({
       queryKey: [CONSTANTS.query.RULES],
     });
+  };
+
+  const handleOnDeleteClick = async () => {
+    if (!rule) return console.log("No ID provided.");
+
+    //@ts-ignore
+    const response = await deleteRule(rule!.id);
+    if (response.success) {
+      setOpen(false);
+    }
   };
 
   const autocompletValue =
@@ -105,7 +123,7 @@ export function RuleForm({ rule }: Props) {
               gap: "1rem",
             }}
           >
-            <IconButton type="submit">
+            <IconButton onClick={() => setOpen(!open)}>
               <Delete />
             </IconButton>
             <Button type="submit" variant="contained">
@@ -164,6 +182,14 @@ export function RuleForm({ rule }: Props) {
           </FormControl>
         </FormGroup>
       </Box>
+      {rule && rule.id && (
+        <DeleteRuleModal
+          ruleId={rule.id}
+          open={open}
+          setOpen={setOpen}
+          handleOnDeleteClick={handleOnDeleteClick}
+        />
+      )}
     </Paper>
   );
 }
