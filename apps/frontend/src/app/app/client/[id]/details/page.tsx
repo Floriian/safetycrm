@@ -1,6 +1,6 @@
 import { assertAuthenticated } from "@/lib/auth";
-import { getOneClientById } from "../_components/client.actions";
-import { ClientForm } from "../_components/ClientForm";
+import { getOneClientById } from "../../_components/client.actions";
+import { ClientForm } from "../../_components/ClientForm";
 
 interface Props {
   params: {
