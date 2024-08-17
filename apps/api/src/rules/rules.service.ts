@@ -7,15 +7,21 @@ import {
   FindOptionsOrder,
   FindOptionsWhere,
   ILike,
+  IsNull,
+  Not,
   QueryFailedError,
 } from 'typeorm';
 import { RuleAlreadyExistsException } from './exceptions/rule-already-exists.exception';
 import { RuleQueryDto } from './dto/rule-query.dto';
 import { Rule } from './entities/rule.entity';
+import { ClientRepository } from 'src/clients/repositories/client.repository';
 
 @Injectable()
 export class RulesService {
-  constructor(private readonly ruleRepository: RuleRepository) {}
+  constructor(
+    private readonly ruleRepository: RuleRepository,
+    private readonly clientRepository: ClientRepository,
+  ) {}
   async create(createRuleDto: CreateRuleDto) {
     try {
       const rule = this.ruleRepository.create(createRuleDto);
@@ -53,6 +59,26 @@ export class RulesService {
       where: whereAttributes,
       order: orderAttributes,
     });
+  }
+
+  async getNotAppliedClientRules(clientId: number) {
+    const rules = await this.ruleRepository
+      .createQueryBuilder('rule')
+      .leftJoin('rule.clients', 'client', 'client.id = :clientId', { clientId })
+      .where('client.id IS NULL')
+      .getMany();
+
+    return await this.toPromises(rules);
+  }
+
+  async getAppliedClientRules(clientId: number) {
+    const rules = await this.ruleRepository
+      .createQueryBuilder('rule')
+      .leftJoin('rule.clients', 'client')
+      .where('client.id = :clientId', { clientId })
+      .getMany();
+
+    return await this.toPromises(rules);
   }
 
   async findOne(id: number) {
@@ -141,5 +167,12 @@ export class RulesService {
     }
 
     return options;
+  }
+
+  private async toPromises(rules: Rule[]) {
+    const rulesPromises = rules.map((rule) =>
+      this.ruleRepository.findDescendantsTree(rule),
+    );
+    return await Promise.all(rulesPromises);
   }
 }

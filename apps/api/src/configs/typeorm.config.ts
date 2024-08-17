@@ -28,6 +28,7 @@ export function buildDataSourceOptinos(
     type: 'postgres',
     schema: 'public',
     synchronize: true,
+    logging: 'all',
   };
 }
 

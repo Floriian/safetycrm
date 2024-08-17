@@ -41,7 +41,6 @@ export class RulesController {
     return this.rulesService.findAll();
   }
 
-  //Why @Query doesnt parse the url query???
   @Get('all')
   @ApiQuery({ type: RuleQueryDto })
   @ApiOkResponse({
@@ -49,6 +48,16 @@ export class RulesController {
   })
   allRules(@Query() query: RuleQueryDto) {
     return this.rulesService.all(query);
+  }
+
+  @Get(`client/not-applied/:id`)
+  getNotAppliedClientRules(@Param('id') id: string) {
+    return this.rulesService.getNotAppliedClientRules(+id);
+  }
+
+  @Get('client/:id')
+  getAppliedClientRules(@Param('id') id: string) {
+    return this.rulesService.getAppliedClientRules(+id);
   }
 
   @Get(':id')
