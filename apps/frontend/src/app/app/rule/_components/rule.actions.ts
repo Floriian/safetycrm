@@ -95,10 +95,18 @@ export const updateRule = async (id: number, _data: CreateOrEditRule) => {
   }
 };
 
-export const getClientRules = async (clientId: number) => {
+export const getAppliedClientRules = async (clientId: number) => {
   try {
-    return await ruleApi.getClientRules(clientId);
+    return await ruleApi.getAppliedClientRules(clientId);
   } catch (e) {
-    logError("getClientRules", e);
+    logError("getAppliedClientRules", e);
+  }
+};
+
+export const getNotAppliedClientRules = async (clientId: number) => {
+  try {
+    return await ruleApi.getClientNotAppliedRules(clientId);
+  } catch (e) {
+    logError("getNotAppliedClientRules", e);
   }
 };

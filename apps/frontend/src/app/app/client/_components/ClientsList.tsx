@@ -9,12 +9,15 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  ListSubheader,
+  Toolbar,
   Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { CONSTANTS } from "@/constants";
 import { getAllClients } from "../../client/_components/client.actions";
 import { useRouter } from "next/navigation";
+import { GridItem, SearchInput } from "@/components";
 
 export function ClientsList() {
   const { data } = useQuery({
@@ -23,40 +26,26 @@ export function ClientsList() {
   });
   const router = useRouter();
   return (
-    <Grid
-      item
-      md={4}
-      sx={{
-        overflow: "auto",
-      }}
-    >
-      <Box sx={{ background: "white" }}>
-        <Typography variant="h6" textAlign="center">
-          Clients
-        </Typography>
-        <Input
-          sx={{ width: "100%" }}
-          placeholder="Client name..."
-          endAdornment={
-            <InputAdornment position="end">
-              <Search />
-            </InputAdornment>
-          }
-        />
-      </Box>
-      <Box sx={{ padding: "1rem" }}>
-        <List>
-          {data?.map((client) => (
-            <ListItem key={client.id}>
-              <ListItemButton
-                onClick={() => router.push(`/app/manager/${client.id}`)}
-              >
-                <ListItemText>{client.name}</ListItemText>
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    </Grid>
+    <GridItem>
+      <Typography variant="h6" textAlign="center">
+        Clients
+      </Typography>
+      <List>
+        <ListSubheader>
+          <Toolbar sx={{ background: "white" }}>
+            <SearchInput />
+          </Toolbar>
+        </ListSubheader>
+        {data?.map((client) => (
+          <ListItem key={client.id}>
+            <ListItemButton
+              onClick={() => router.push(`/app/manager/${client.id}`)}
+            >
+              <ListItemText>{client.name}</ListItemText>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </GridItem>
   );
 }

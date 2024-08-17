@@ -1,12 +1,12 @@
 import { Add } from "@mui/icons-material";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Toolbar } from "@mui/material";
 
 export default function RuleHeader() {
   return (
-    <Box sx={{ margin: "1rem" }}>
+    <Toolbar sx={{ margin: "1rem" }}>
       <IconButton>
         <Add />
       </IconButton>
-    </Box>
+    </Toolbar>
   );
 }
