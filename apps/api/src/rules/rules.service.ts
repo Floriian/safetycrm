@@ -7,14 +7,15 @@ import {
   FindOptionsOrder,
   FindOptionsWhere,
   ILike,
-  IsNull,
-  Not,
   QueryFailedError,
 } from 'typeorm';
 import { RuleAlreadyExistsException } from './exceptions/rule-already-exists.exception';
 import { RuleQueryDto } from './dto/rule-query.dto';
 import { Rule } from './entities/rule.entity';
 import { ClientRepository } from 'src/clients/repositories/client.repository';
+import { RuleClientDto } from './dto/RuleClientDto';
+import { ClientNotFoundException } from 'src/clients/exceptions/client-not-found.exception';
+import { RuleNotFoundException } from './exceptions/rule-not-fond.exception';
 
 @Injectable()
 export class RulesService {
@@ -40,6 +41,43 @@ export class RulesService {
         if (e.message.includes('duplicate key violates'))
           throw new RuleAlreadyExistsException();
       }
+      throw e;
+    }
+  }
+
+  async assignRule(dto: RuleClientDto) {
+    const client = await this.clientRepository.findOneById(dto.clientId);
+    if (!client) throw new ClientNotFoundException();
+
+    const rule = await this.ruleRepository.findOneById(dto.ruleId);
+    if (!rule) throw new RuleNotFoundException();
+
+    try {
+      rule.clients = [...rule.clients, client];
+      return await this.ruleRepository.save(rule);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async deassignRule(dto: RuleClientDto) {
+    const client = await this.clientRepository.findOneById(dto.clientId);
+    if (!client) throw new ClientNotFoundException();
+
+    const rule = await this.ruleRepository.findOneById(dto.ruleId);
+    if (!rule) throw new RuleNotFoundException();
+
+    try {
+      const newRules = rule.clients.filter(
+        (client) => client.id !== dto.clientId,
+      );
+
+      rule.clients = newRules;
+
+      return await this.ruleRepository.save(rule);
+    } catch (e) {
+      console.log(e);
       throw e;
     }
   }

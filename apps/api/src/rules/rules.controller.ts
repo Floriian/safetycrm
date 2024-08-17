@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { Rule } from './entities/rule.entity';
 import { RuleQueryDto } from './dto/rule-query.dto';
+import { RuleClientDto } from './dto/RuleClientDto';
 
 @Controller('rules')
 @ApiTags(RulesController.name)
@@ -31,6 +32,16 @@ export class RulesController {
   })
   create(@Body() createRuleDto: CreateRuleDto) {
     return this.rulesService.create(createRuleDto);
+  }
+
+  @Post('assign')
+  assignRule(@Body() ruleClientDto: RuleClientDto) {
+    return this.rulesService.assignRule(ruleClientDto);
+  }
+
+  @Delete('deassign')
+  deassignRule(@Body() ruleClientDto: RuleClientDto) {
+    return this.rulesService.deassignRule(ruleClientDto);
   }
 
   @Get()
