@@ -94,3 +94,11 @@ export const updateRule = async (id: number, _data: CreateOrEditRule) => {
     logError("updateRule", e);
   }
 };
+
+export const getClientRules = async (clientId: number) => {
+  try {
+    return await ruleApi.getClientRules(clientId);
+  } catch (e) {
+    logError("getClientRules", e);
+  }
+};

@@ -26,4 +26,8 @@ export const ruleApi = {
     const { data } = await api.patch<ApiUpdateResponse>(`/rules/${id}`, rule);
     return data;
   },
+  getClientRules: async (clientId: number) => {
+    const { data } = await api<Rule[]>(`/rules/client/${clientId}`);
+    return data;
+  },
 };
