@@ -26,3 +26,10 @@ export const createOrEditRule = z.object({
 });
 
 export type CreateOrEditRule = z.infer<typeof createOrEditRule>;
+
+export const assignRule = z.object({
+  ruleId: z.number(),
+  clientId: z.number(),
+});
+
+export type AssignRule = z.infer<typeof assignRule>;

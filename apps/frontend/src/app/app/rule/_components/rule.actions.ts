@@ -110,3 +110,26 @@ export const getNotAppliedClientRules = async (clientId: number) => {
     logError("getNotAppliedClientRules", e);
   }
 };
+
+export const assignRuleToClient = async (ruleId: number, clientId: number) => {
+  try {
+    const response = await ruleApi.assignRuleToClient({ clientId, ruleId });
+    revalidatePath(`/app/manager/${clientId}`);
+    return response;
+  } catch (e) {
+    logError("assignRuleToClient", e);
+  }
+};
+
+export const deassignRuleToClient = async (
+  ruleId: number,
+  clientId: number
+) => {
+  try {
+    const response = await ruleApi.deassignRuleToClient({ clientId, ruleId });
+    revalidatePath(`/app/manager/${clientId}`);
+    return response;
+  } catch (e) {
+    logError("assignRuleToClient", e);
+  }
+};

@@ -16,6 +16,7 @@ import { ClientRepository } from 'src/clients/repositories/client.repository';
 import { RuleClientDto } from './dto/RuleClientDto';
 import { ClientNotFoundException } from 'src/clients/exceptions/client-not-found.exception';
 import { RuleNotFoundException } from './exceptions/rule-not-fond.exception';
+import { ClientNotAssignedToThisRule } from './exceptions/client-not-assigned-to-this-rule.exception';
 
 @Injectable()
 export class RulesService {
@@ -53,6 +54,8 @@ export class RulesService {
     if (!rule) throw new RuleNotFoundException();
 
     try {
+      rule.clients = Array.isArray(rule.clients) ? rule.clients : [];
+
       rule.clients = [...rule.clients, client];
       return await this.ruleRepository.save(rule);
     } catch (e) {
@@ -65,21 +68,25 @@ export class RulesService {
     const client = await this.clientRepository.findOneById(dto.clientId);
     if (!client) throw new ClientNotFoundException();
 
-    const rule = await this.ruleRepository.findOneById(dto.ruleId);
+    const rule = await this.ruleRepository.findOne({
+      where: {
+        id: dto.ruleId,
+      },
+      relations: {
+        clients: true,
+      },
+    });
     if (!rule) throw new RuleNotFoundException();
 
-    try {
-      const newRules = rule.clients.filter(
-        (client) => client.id !== dto.clientId,
-      );
+    const clientIndex = rule.clients.findIndex(
+      (existingClient) => existingClient.id === dto.clientId,
+    );
 
-      rule.clients = newRules;
+    if (clientIndex === -1) throw new ClientNotAssignedToThisRule();
 
-      return await this.ruleRepository.save(rule);
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
+    rule.clients.splice(clientIndex, 1);
+
+    return await this.ruleRepository.save(rule);
   }
 
   async findAll() {

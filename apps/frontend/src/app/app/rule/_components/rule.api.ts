@@ -1,5 +1,5 @@
 import { api } from "@/utils";
-import type { CreateOrEditRule, Rule } from "./rule.schema";
+import type { AssignRule, CreateOrEditRule, Rule } from "./rule.schema";
 import type { ApiUpdateResponse } from "@/types";
 export const ruleApi = {
   findAllWithTreeStructure: async () => {
@@ -33,6 +33,15 @@ export const ruleApi = {
 
   getClientNotAppliedRules: async (clientId: number) => {
     const { data } = await api<Rule[]>(`/rules/client/not-applied/${clientId}`);
+    return data;
+  },
+
+  assignRuleToClient: async (dto: AssignRule) => {
+    const { data } = await api.post<Rule[]>("/rules/assign", dto);
+    return data;
+  },
+  deassignRuleToClient: async (dto: AssignRule) => {
+    const { data } = await api.post<Rule[]>("/rules/deassign", dto);
     return data;
   },
 };

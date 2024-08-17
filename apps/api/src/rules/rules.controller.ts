@@ -39,7 +39,7 @@ export class RulesController {
     return this.rulesService.assignRule(ruleClientDto);
   }
 
-  @Delete('deassign')
+  @Post('deassign')
   deassignRule(@Body() ruleClientDto: RuleClientDto) {
     return this.rulesService.deassignRule(ruleClientDto);
   }

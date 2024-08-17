@@ -18,14 +18,14 @@ import { Rule } from "../../rule/_components/rule.schema";
 import { useState } from "react";
 import { ArrowRight, ArrowRightAlt, Search } from "@mui/icons-material";
 import { SearchInput } from "@/components";
+import { deassignRuleToClient } from "../../rule/_components/rule.actions";
+import { useParams } from "next/navigation";
 
 interface Props {
   clientRules: Rule[];
 }
 export function ClientRulesList({ clientRules }: Props) {
-  const onClick = () => {
-    console.log("clicked");
-  };
+  const params = useParams<{ clientId: string }>();
   return (
     <List>
       <ListSubheader>
@@ -42,7 +42,9 @@ export function ClientRulesList({ clientRules }: Props) {
       </ListSubheader>
       {clientRules?.map((rule) => (
         <ListItem key={rule.id}>
-          <ListItemButton onClick={onClick}>
+          <ListItemButton
+            onClick={() => deassignRuleToClient(rule.id!, +params.clientId)}
+          >
             <ListItemText primary={<Typography>{rule.name}</Typography>} />
             <IconButton disabled>
               <ArrowRightAlt />
