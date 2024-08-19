@@ -1,3 +1,4 @@
+import { Role } from 'src/auth/role.enum';
 import { Client } from 'src/clients/entities/client.entity';
 import {
   Column,
@@ -23,6 +24,13 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   @OneToMany(() => Client, (client) => client.user)
   clients?: Client[];
