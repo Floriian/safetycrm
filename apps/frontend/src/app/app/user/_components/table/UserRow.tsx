@@ -4,7 +4,7 @@ import { userTableCols } from "./user-table-cols";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Delete, Edit } from "@mui/icons-material";
-import { getCurrentUser } from "@/app/_components/auth.actions";
+import { assertAuthenticated } from "@/lib/auth";
 
 interface Props {
   user: User;
@@ -13,8 +13,8 @@ interface Props {
 export async function UserRow({ user }: Props) {
   const userRow = userTableCols.map((col) => user[col.name]);
 
-  const currentUser = await getCurrentUser();
-  const isUserMatchesWithCurrentUser = currentUser?.user?.id === user.id;
+  const currentUser = await assertAuthenticated();
+  const isUserMatchesWithCurrentUser = currentUser?.id === user.id;
 
   return (
     <TableRow>
