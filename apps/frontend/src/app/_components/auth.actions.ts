@@ -7,7 +7,7 @@ import { authApi } from "./auth.api";
 import { Axios, AxiosError, HttpStatusCode } from "axios";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { logError } from "@/utils";
+import { handleError } from "@/utils";
 import { User } from "../app/user/_components/user.schema";
 import { unstable_cache } from "next/cache";
 
@@ -35,7 +35,7 @@ export const loginAction = async (
       success: true,
     };
   } catch (e) {
-    logError("loginAction", e);
+    handleError("loginAction", e);
     return { success: false, message: "Invalid credentials" };
   }
 };
@@ -61,6 +61,6 @@ export const getCurrentUser = cache(async () => {
         } satisfies GetCurrentUser;
       }
     }
-    logError("getCurrentUser", e);
+    handleError("getCurrentUser", e);
   }
 });

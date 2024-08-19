@@ -34,7 +34,6 @@ export function RuleList() {
   const orderByFields = orderBy
     .map((o) => (o.isASC ? o.field : undefined))
     .filter((o): o is keyof Rule => o !== undefined);
-  useEffect(() => console.log(orderByFields), [orderByFields]);
 
   const {
     data: rules,

@@ -156,7 +156,6 @@ export function RuleForm({ rule }: Props) {
                     mapRulesToAutoComplete || [{ id: undefined, label: "" }]
                   }
                   onChange={(e, data) => {
-                    console.log(data);
                     if (!data) return;
 
                     if (data === null) setValue("parentId", undefined);

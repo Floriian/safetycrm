@@ -1,6 +1,6 @@
 "use server";
 
-import { createUrlQuery, logError } from "@/utils";
+import { createUrlQuery, handleError } from "@/utils";
 import { ruleApi } from "./rule.api";
 import {
   ApiError,
@@ -17,7 +17,7 @@ export const getTreeRule = async () => {
   try {
     return await ruleApi.findAllWithTreeStructure();
   } catch (e) {
-    logError("getRules", e);
+    handleError("getRules", e);
   }
 };
 
@@ -25,7 +25,7 @@ export const getOneRuleById = async (id: number) => {
   try {
     return await ruleApi.findOneById(id);
   } catch (e) {
-    logError("getOneRuleById", e);
+    handleError("getOneRuleById", e);
   }
 };
 
@@ -39,12 +39,10 @@ export const getAllRules = async (
       ...searchBy,
       orderByFields: searchBy?.orderFields?.join(","),
     };
-    console.log(createUrlQueryObject);
     const urlQueries = searchBy && createUrlQuery(createUrlQueryObject);
-    console.log(urlQueries);
     return await ruleApi.getAll(urlQueries ? urlQueries : "");
   } catch (e) {
-    logError("searchRules", e);
+    handleError("searchRules", e);
   }
 };
 
@@ -62,7 +60,7 @@ export const createRule = async (rule: CreateOrEditRule) => {
         data: e.response?.data,
       } satisfies CreateResponse<ApiError>;
     }
-    logError("createRule", e);
+    handleError("createRule", e);
   }
 };
 
@@ -73,7 +71,7 @@ export const deleteRule = async (id: number) => {
     return { success: true } satisfies DeleteResponse;
   } catch (e) {
     return { success: false } satisfies DeleteResponse;
-    logError("deleteRule", e);
+    handleError("deleteRule", e);
   }
 };
 
@@ -91,7 +89,7 @@ export const updateRule = async (id: number, _data: CreateOrEditRule) => {
         success: false,
       } satisfies UpdateResponse<ApiError>;
     }
-    logError("updateRule", e);
+    handleError("updateRule", e);
   }
 };
 
@@ -99,7 +97,7 @@ export const getAppliedClientRules = async (clientId: number) => {
   try {
     return await ruleApi.getAppliedClientRules(clientId);
   } catch (e) {
-    logError("getAppliedClientRules", e);
+    handleError("getAppliedClientRules", e);
   }
 };
 
@@ -107,7 +105,7 @@ export const getNotAppliedClientRules = async (clientId: number) => {
   try {
     return await ruleApi.getClientNotAppliedRules(clientId);
   } catch (e) {
-    logError("getNotAppliedClientRules", e);
+    handleError("getNotAppliedClientRules", e);
   }
 };
 
@@ -117,7 +115,7 @@ export const assignRuleToClient = async (ruleId: number, clientId: number) => {
     revalidatePath(`/app/manager/${clientId}`);
     return response;
   } catch (e) {
-    logError("assignRuleToClient", e);
+    handleError("assignRuleToClient", e);
   }
 };
 
@@ -130,6 +128,6 @@ export const deassignRuleToClient = async (
     revalidatePath(`/app/manager/${clientId}`);
     return response;
   } catch (e) {
-    logError("assignRuleToClient", e);
+    handleError("assignRuleToClient", e);
   }
 };

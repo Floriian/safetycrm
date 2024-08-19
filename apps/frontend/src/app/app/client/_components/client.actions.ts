@@ -3,7 +3,7 @@
 import { clientApi } from "./client.api";
 import { Client } from "./client.schema";
 import { isAxiosError } from "axios";
-import { logError } from "@/utils";
+import { handleError } from "@/utils";
 import { ApiError, CreateResponse, UpdateResponse } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -18,7 +18,7 @@ export const createClient = async (client: Client) => {
         data: e.response?.data,
       } satisfies CreateResponse<ApiError>;
     }
-    logError("createClient", e);
+    handleError("createClient", e);
   }
 };
 
@@ -26,7 +26,7 @@ export const getAllClients = async () => {
   try {
     return await clientApi.getAll();
   } catch (e) {
-    logError("getAllClients", e);
+    handleError("getAllClients", e);
   }
 };
 
@@ -35,7 +35,7 @@ export const getOneClientById = async (id: number) => {
     await revalidatePath("/app/clients");
     return await clientApi.getOneById(id);
   } catch (e) {
-    logError("getOneClientById", e);
+    handleError("getOneClientById", e);
   }
 };
 
@@ -51,6 +51,6 @@ export const updateClient = async (id: number, data: Client) => {
         success: false,
       } satisfies UpdateResponse<ApiError>;
     }
-    logError("updateClient", e);
+    handleError("updateClient", e);
   }
 };
